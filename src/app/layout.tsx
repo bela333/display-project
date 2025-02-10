@@ -1,9 +1,19 @@
 import "@/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "@/trpc/react";
+
+import {
+  AppShell,
+  AppShellMain,
+  ColorSchemeScript,
+  createTheme,
+  mantineHtmlProps,
+  MantineProvider,
+} from "@mantine/core";
+
+import "@mantine/core/styles.css";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -11,13 +21,28 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const theme = createTheme({});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={GeistSans.className}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="en" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript defaultColorScheme="auto" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+        />
+      </head>
+      <body>
+        <TRPCReactProvider>
+          <MantineProvider theme={theme} defaultColorScheme="auto">
+            <AppShell>
+              <AppShellMain>{children}</AppShellMain>
+            </AppShell>
+          </MantineProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );
