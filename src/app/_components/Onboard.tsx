@@ -1,26 +1,38 @@
 "use client";
 import { Button, Divider, Stack, TextInput } from "@mantine/core";
 import { useActionState } from "react";
-import { join } from "./join";
+import { joinRoom } from "./joinRoom";
+import { createRoom } from "./createRoom";
+import { CODE_LENGTH } from "@/lib/consts";
 
 export function Onboard() {
-  const [state, formAction, joinPending] = useActionState(join, undefined);
+  const [joinRoomState, joinRoomAction, joinPending] = useActionState(
+    joinRoom,
+    undefined
+  );
+  const [createRoomState, createRoomAction, createPending] = useActionState(
+    createRoom,
+    undefined
+  );
 
-  const newRoomPending = false;
-
-  const pending = joinPending || newRoomPending;
+  const pending = joinPending || createPending;
 
   return (
     <Stack>
-      <form action={formAction}>
+      <form action={joinRoomAction}>
         <Stack>
           <TextInput
             name="code"
-            error={state?.errors.code}
+            error={joinRoomState?.errors?.code}
             placeholder="Room code"
             autoComplete="off"
             autoCapitalize="off"
-            maxLength={6}
+            maxLength={CODE_LENGTH}
+            styles={{
+              input: {
+                textTransform: "uppercase",
+              },
+            }}
           />
           <Button type="submit" loading={pending}>
             Join
@@ -28,9 +40,13 @@ export function Onboard() {
         </Stack>
       </form>
       <Divider />
-      <Button variant="light" loading={pending}>
-        New room
-      </Button>
+      <form action={createRoomAction}>
+        <Stack>
+          <Button variant="light" loading={pending} type="submit">
+            New room
+          </Button>
+        </Stack>
+      </form>
     </Stack>
   );
 }

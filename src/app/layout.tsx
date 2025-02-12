@@ -14,6 +14,9 @@ import {
 } from "@mantine/core";
 
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+
+import { Notifications } from "@mantine/notifications";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -38,6 +41,7 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <MantineProvider theme={theme} defaultColorScheme="auto">
+            <Notifications />
             <AppShell>
               <AppShellMain>{children}</AppShellMain>
             </AppShell>
