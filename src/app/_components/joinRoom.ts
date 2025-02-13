@@ -3,10 +3,11 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import redis from "@/lib/redis";
-import { CODE_LENGTH, CODE_REGEX } from "@/lib/consts";
+import { codeValidation } from "@/lib/utils";
+import { roomRoot } from "@/lib/redis-keys";
 
 const schema = z.object({
-  code: z.string().length(CODE_LENGTH).regex(CODE_REGEX),
+  code: codeValidation(),
 });
 
 export async function joinRoom(_, data: FormData) {
@@ -22,7 +23,7 @@ export async function joinRoom(_, data: FormData) {
 
   const code = validatedFields.data.code.toLowerCase();
 
-  if (!(await redis.exists(`room:${code}`))) {
+  if (!(await redis.exists(roomRoot(code)))) {
     return {
       errors: {
         code: ["Invalid code"],

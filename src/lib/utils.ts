@@ -1,4 +1,5 @@
-import { CODE_ALPHABET, CODE_LENGTH } from "./consts";
+import { z } from "zod";
+import { CODE_ALPHABET, CODE_LENGTH, CODE_REGEX } from "./consts";
 
 // https://rosettacode.org/wiki/Modular_exponentiation#Nim
 export function powmod(b: bigint, e: bigint, m: bigint) {
@@ -15,7 +16,7 @@ export function powmod(b: bigint, e: bigint, m: bigint) {
   return result;
 }
 
-export function obfuscateKey(key: number, length = CODE_LENGTH) {
+export function keyToCode(key: number, length = CODE_LENGTH) {
   // This function uses the bijective
   // properties of LCG random number generators
   // to obfuscate the key
@@ -30,9 +31,12 @@ export function obfuscateKey(key: number, length = CODE_LENGTH) {
   let num = (apowkey + ((apowkey - 1n) / (a - 1n)) * c) % modulo;
   let code = "";
   for (let i = 0; i < length; i++) {
-    console.log(num);
     code += CODE_ALPHABET[Number(num) % CODE_ALPHABET.length];
     num = num / BigInt(CODE_ALPHABET.length);
   }
   return code;
+}
+
+export function codeValidation() {
+  return z.string().length(CODE_LENGTH).regex(CODE_REGEX);
 }
