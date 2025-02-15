@@ -30,7 +30,7 @@ export default function ViewPage() {
 
   useEffect(() => {
     if (!imageRef || !roomID || !screenID) {
-      return () => {};
+      return;
     }
 
     const observer = new ResizeObserver((entry) => {

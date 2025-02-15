@@ -1,7 +1,7 @@
 "use server";
 import { EXPIRE_SECONDS } from "@/lib/consts";
 import redis from "@/lib/redis";
-import { roomScreenAvailable } from "@/lib/redis-keys";
+import { roomPubSub, roomScreenAvailable } from "@/lib/redis-keys";
 
 export async function registerScreen(roomID: string, screenID: number) {
   await redis.sAdd(roomScreenAvailable(roomID), String(screenID));
@@ -9,5 +9,6 @@ export async function registerScreen(roomID: string, screenID: number) {
 }
 
 export async function deregisterScreen(roomID: string, screenID: number) {
-  return redis.sRem(roomScreenAvailable(roomID), String(screenID));
+  await redis.sRem(roomScreenAvailable(roomID), String(screenID));
+  await redis.publish(roomPubSub(roomID), "ping");
 }

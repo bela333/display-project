@@ -10,7 +10,7 @@ export function Onboard() {
     joinRoom,
     undefined
   );
-  const [createRoomState, createRoomAction, createPending] = useActionState(
+  const [_, createRoomAction, createPending] = useActionState(
     createRoom,
     undefined
   );

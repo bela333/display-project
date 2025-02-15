@@ -2,7 +2,7 @@
 import { EXPIRE_SECONDS } from "@/lib/consts";
 import redis from "@/lib/redis";
 import { roomRoot, screenConfig } from "@/lib/redis-keys";
-import { ScreenConfig } from "@/lib/screenconfig";
+import { type ScreenConfig } from "@/lib/screenConfig";
 
 export async function updateScreenBounds(
   room: string,

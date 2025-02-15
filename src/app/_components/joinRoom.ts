@@ -10,7 +10,7 @@ const schema = z.object({
   code: codeValidation(),
 });
 
-export async function joinRoom(_, data: FormData) {
+export async function joinRoom(_: unknown, data: FormData) {
   const validatedFields = schema.safeParse({
     code: data.get("code"),
   });
