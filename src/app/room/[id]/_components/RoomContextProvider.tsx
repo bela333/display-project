@@ -2,9 +2,9 @@
 
 import { api } from "@/trpc/react";
 import { type ReactNode } from "react";
-import roomSubscriptionContext from "../_contexts/roomSubscriptionContext";
+import roomContext from "../_contexts/roomContext";
 
-export default function RoomSubscriptionProvider({
+export default function RoomContextProvider({
   children,
   room,
 }: Readonly<{ children?: ReactNode; room: string }>) {
@@ -18,8 +18,10 @@ export default function RoomSubscriptionProvider({
   }
 
   return (
-    <roomSubscriptionContext.Provider value={{ lastEvent: subscription.data }}>
+    <roomContext.Provider
+      value={{ lastEvent: subscription.data, roomID: room }}
+    >
       {children}
-    </roomSubscriptionContext.Provider>
+    </roomContext.Provider>
   );
 }

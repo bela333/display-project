@@ -2,10 +2,10 @@ import "server-only";
 import "redis";
 import { createClient } from "redis";
 
-const client = createClient({
+const redis = createClient({
   url: process.env.REDIS_URL,
 });
 
-await client.connect();
+await redis.connect();
 
-export default client;
+export default redis;

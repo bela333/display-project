@@ -1,12 +1,10 @@
 import { type ReactNode } from "react";
-import RoomSubscriptionProvider from "./_components/RoomSubscriptionProvider";
+import RoomContextProvider from "./_components/RoomContextProvider";
 
 export default async function RoomLayout({
   children,
   params,
 }: Readonly<{ children?: ReactNode; params: Promise<{ id: string }> }>) {
   const room = (await params).id;
-  return (
-    <RoomSubscriptionProvider room={room}>{children}</RoomSubscriptionProvider>
-  );
+  return <RoomContextProvider room={room}>{children}</RoomContextProvider>;
 }

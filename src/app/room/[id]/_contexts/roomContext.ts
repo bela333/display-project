@@ -3,16 +3,15 @@ import { type inferAsyncIterableYield } from "@trpc/server/unstable-core-do-not-
 import { createContext } from "react";
 import { type AppRouter } from "@/server/api/root";
 
-export type RoomSubscriptionContextType = {
+export type RoomContextType = {
   lastEvent: inferAsyncIterableYield<
     inferAsyncIterableYield<
       AppRouter["room"]["roomEvents"]["_def"]["$types"]["output"]
     >
   >;
+  roomID: string;
 };
 
-const roomSubscriptionContext = createContext<
-  RoomSubscriptionContextType | undefined
->(undefined);
+const roomContext = createContext<RoomContextType | undefined>(undefined);
 
-export default roomSubscriptionContext;
+export default roomContext;

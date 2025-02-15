@@ -9,3 +9,19 @@ export function roomRoot(room: string) {
 export function roomPubSub(room: string) {
   return roomRoot(room);
 }
+
+export function roomScreenCount(room: string) {
+  return `${roomRoot(room)}:screenCount`;
+}
+
+export function roomScreenAvailable(room: string) {
+  return `${roomRoot(room)}:available`;
+}
+
+export function screenRoot(room: string, screen: number) {
+  return `${roomRoot(room)}:screen:${screen}`;
+}
+
+export function screenConfig(room: string, screen: number) {
+  return `${screenRoot(room, screen)}:config`;
+}
