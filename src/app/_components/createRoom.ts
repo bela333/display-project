@@ -11,8 +11,6 @@ export async function createRoom() {
 
   const code = keyToCode(key).toLowerCase();
 
-  //TODO: Setup room properly
-  //TODO: Create helper functions for redis keys
   await redis.set(roomScreenCount(code), 0, {
     EX: EXPIRE_SECONDS,
   });
