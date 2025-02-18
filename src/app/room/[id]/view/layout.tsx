@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import ScreenContextProvider from "./_components/ScreenContextProvider";
-import redis from "@/lib/redis";
-import { roomPubSub, roomScreenCount } from "@/lib/redis-keys";
+import redis from "@/app/db/redis";
+import { roomPubSub, roomScreenCount } from "@/app/db/redis-keys";
 
 export default async function ViewLayout({
   children,

@@ -1,7 +1,7 @@
 "use server";
 import { EXPIRE_SECONDS } from "@/lib/consts";
-import redis from "@/lib/redis";
-import { roomRoot, screenConfig } from "@/lib/redis-keys";
+import redis from "@/app/db/redis";
+import { roomRoot, screenConfig } from "@/app/db/redis-keys";
 import { type ScreenConfig } from "@/lib/screenConfig";
 
 export async function updateScreenBounds(

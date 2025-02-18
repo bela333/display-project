@@ -14,6 +14,10 @@ export function roomScreenCount(room: string) {
   return `${roomRoot(room)}:screenCount`;
 }
 
+export function roomMode(room: string) {
+  return `${roomRoot(room)}:mode`;
+}
+
 export function roomScreenAvailable(room: string) {
   return `${roomRoot(room)}:available`;
 }
@@ -24,4 +28,8 @@ export function screenRoot(room: string, screen: number) {
 
 export function screenConfig(room: string, screen: number) {
   return `${screenRoot(room, screen)}:config`;
+}
+
+export function screenPing(room: string, screen: number) {
+  return `${screenRoot(room, screen)}:ping`;
 }

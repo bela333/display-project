@@ -2,13 +2,15 @@
 import { Button, Center, Paper, Stack, Text, TextInput } from "@mantine/core";
 import { use } from "react";
 import { useParams } from "next/navigation";
-import sendMessage from "./_sendMessage";
+import sendMessage from "./_actions/sendMessage";
 import roomContext from "../_contexts/roomContext";
 import Link from "next/link";
+import changeMode from "./_actions/changeMode";
 
 export default function Config() {
-  const { id } = useParams();
+  const { id }: { id: string } = useParams();
   const room = use(roomContext);
+  const mode = room?.lastEvent.mode ?? "calibration";
   return (
     <>
       <Stack>
@@ -29,6 +31,15 @@ export default function Config() {
         <Button component={Link} href="view">
           View
         </Button>
+        {mode === "calibration" ? (
+          <Button color="green" onClick={() => changeMode(id, "viewing")}>
+            Go live!
+          </Button>
+        ) : (
+          <Button color="red" onClick={() => changeMode(id, "calibration")}>
+            Return to configuration
+          </Button>
+        )}
       </Stack>
     </>
   );

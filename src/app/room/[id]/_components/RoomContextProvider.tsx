@@ -10,7 +10,7 @@ export default function RoomContextProvider({
 }: Readonly<{ children?: ReactNode; room: string }>) {
   const subscription = api.room.roomEvents.useSubscription({ room });
   //TODO: Suspend until it loads
-  if (subscription.status === "connecting") {
+  if (subscription.status === "connecting" || subscription.data === undefined) {
     return "Connecting...";
   }
   if (subscription.status === "error") {
