@@ -2,15 +2,15 @@
 
 import { api } from "@/trpc/react";
 import { type ReactNode } from "react";
-import roomSubscriptionContext from "../_contexts/roomSubscriptionContext";
+import roomContext from "../_contexts/roomContext";
 
-export default function RoomSubscriptionProvider({
+export default function RoomContextProvider({
   children,
   room,
 }: Readonly<{ children?: ReactNode; room: string }>) {
   const subscription = api.room.roomEvents.useSubscription({ room });
   //TODO: Suspend until it loads
-  if (subscription.status === "connecting") {
+  if (subscription.status === "connecting" || subscription.data === undefined) {
     return "Connecting...";
   }
   if (subscription.status === "error") {
@@ -18,8 +18,10 @@ export default function RoomSubscriptionProvider({
   }
 
   return (
-    <roomSubscriptionContext.Provider value={{ lastEvent: subscription.data }}>
+    <roomContext.Provider
+      value={{ lastEvent: subscription.data, roomID: room }}
+    >
       {children}
-    </roomSubscriptionContext.Provider>
+    </roomContext.Provider>
   );
 }

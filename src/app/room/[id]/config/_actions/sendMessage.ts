@@ -1,6 +1,6 @@
 "use server";
-import redis from "@/lib/redis";
-import { roomPubSub } from "@/lib/redis-keys";
+import redis from "@/app/db/redis";
+import { roomPubSub } from "@/app/db/redis-keys";
 
 export default async function sendMessage(form: FormData) {
   const message = form.get("message");

@@ -1,8 +1,13 @@
 "use server";
 
 import { EXPIRE_SECONDS } from "@/lib/consts";
-import redis from "@/lib/redis";
-import { roomCount, roomRoot } from "@/lib/redis-keys";
+import redis from "@/app/db/redis";
+import {
+  roomCount,
+  roomMode,
+  roomRoot,
+  roomScreenCount,
+} from "@/app/db/redis-keys";
 import { keyToCode } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
@@ -11,9 +16,13 @@ export async function createRoom() {
 
   const code = keyToCode(key).toLowerCase();
 
-  //TODO: Setup room properly
-  //TODO: Create helper functions for redis keys
+  await redis.set(roomScreenCount(code), 0, {
+    EX: EXPIRE_SECONDS,
+  });
   await redis.set(roomRoot(code), 1, {
+    EX: EXPIRE_SECONDS,
+  });
+  await redis.set(roomMode(code), "calibration", {
     EX: EXPIRE_SECONDS,
   });
 

@@ -2,15 +2,15 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import redis from "@/lib/redis";
+import redis from "@/app/db/redis";
 import { codeValidation } from "@/lib/utils";
-import { roomRoot } from "@/lib/redis-keys";
+import { roomRoot } from "@/app/db/redis-keys";
 
 const schema = z.object({
   code: codeValidation(),
 });
 
-export async function joinRoom(_, data: FormData) {
+export async function joinRoom(_: unknown, data: FormData) {
   const validatedFields = schema.safeParse({
     code: data.get("code"),
   });
