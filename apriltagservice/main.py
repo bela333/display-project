@@ -38,7 +38,7 @@ class ProcessRequest(BaseModel):
 
 detector = Detector()
 
-
+# screen <- code homography
 def construct_code_homography(screen: Screen):
     return np.array(
         (
@@ -81,12 +81,17 @@ def process_image(
         if screen is None:
             continue
         # Calculate screen homography from
-        # screen -> code homography
-        # and picture -> code homography
+        # screen <- code homography
+        # and picture <- code homography
         code_homography = construct_code_homography(screen)
         homography: np.array = tag.homography.dot(
             np.array(([2, 0, -1], [0, 2, -1], [0, 0, 1]))
         ).dot(np.linalg.inv(code_homography))
+        # transform homography, such inputs are in pixel space
+        # so top left corner is (0, 0)
+        # and bottom right corner is (screen.screenSize[0], screen.screenSize[1])
+        # currently they are (0, 0) and (1, 1)
+        homography = homography.dot(np.array(([1/screen.screenSize[0], 0, 0], [0, 1/screen.screenSize[1], 0], [0, 0, 1])))
         response_screens.append({"id": screen.id, "homography": homography.tolist()})
     print(response_screens)
     return response_screens

@@ -8,7 +8,6 @@ export async function setupScreenExpiry(redis: RedisClientType) {
   const listener = redis.duplicate();
   await listener.connect();
   void listener.subscribe("__keyevent@0__:expired", (key) => {
-    console.log(key);
     const matches = key.match(screenKeyRegex);
     if (matches === null) {
       return;
@@ -16,7 +15,7 @@ export async function setupScreenExpiry(redis: RedisClientType) {
     const roomID = matches[1];
     const screenID = matches[2];
     if (!roomID || !screenID) {
-      console.log("Invalid expire packet: ", roomID, screenID);
+      console.error("Invalid expire packet: ", roomID, screenID);
       return;
     }
     void deregisterScreen(roomID, Number(screenID));

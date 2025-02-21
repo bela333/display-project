@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { Box, Flex, Text } from "@mantine/core";
 import { use, useEffect, useState } from "react";
@@ -23,6 +24,7 @@ function ViewingPage({
           transform: "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1)",
           transformOrigin: "bottom left",
         }}
+        alt="AprilTag"
         src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
       ></img>
     </Box>

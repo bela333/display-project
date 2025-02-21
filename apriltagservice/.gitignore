@@ -1,6 +1,7 @@
 __pycache__
 venv
 *.jpg
+*.png
 *.ipynb
 venv
 venv-*
