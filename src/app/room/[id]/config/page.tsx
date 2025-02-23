@@ -1,11 +1,21 @@
 "use client";
-import { Button, Center, Paper, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  Center,
+  FileInput,
+  Flex,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { use } from "react";
 import { useParams } from "next/navigation";
 import sendMessage from "./_actions/sendMessage";
 import roomContext from "../_contexts/roomContext";
 import Link from "next/link";
 import changeMode from "./_actions/changeMode";
+import uploadFile from "./_actions/uploadFile";
 
 export default function Config() {
   const { id }: { id: string } = useParams();
@@ -40,6 +50,13 @@ export default function Config() {
             Return to configuration
           </Button>
         )}
+        <form action={uploadFile}>
+          <Flex direction="row" style={{ width: "100%" }}>
+            <input type="hidden" name="room" value={room?.roomID} />
+            <FileInput name="file" label="Upload picture here" />
+            <Button type="submit">Send</Button>
+          </Flex>
+        </form>
       </Stack>
     </>
   );

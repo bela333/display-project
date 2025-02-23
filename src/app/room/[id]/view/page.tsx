@@ -10,19 +10,41 @@ import roomContext, { type RoomContextType } from "../_contexts/roomContext";
 import Image from "next/image";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { updateScreenBounds } from "./_actions/updateScreenBounds";
+import * as math from "mathjs";
 
 function ViewingPage({
   room,
   screen,
 }: Readonly<{ room: RoomContextType; screen: ScreenContextType }>) {
+  const screenLocal = room.lastEvent.screenLocals.find(
+    (local) => local.id === String(screen.screenID)
+  );
+
+  // Row major 2D affine transformation (3x3)
+  const homography = screenLocal?.homography ?? [
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1],
+  ];
+
+  // Column major 3D affine transformation (4x4)
+  let matrix = math.matrix([
+    [homography[0][0], homography[1][0], 0, homography[2][0]],
+    [homography[0][1], homography[1][1], 0, homography[2][1]],
+    [0, 0, homography[2][2], 0],
+    [homography[0][2], homography[1][2], 0, homography[2][2]],
+  ] as const);
+
+  matrix = math.inv(matrix);
+
   return (
     <Box w="100dvw" h="100dvh" style={{ overflow: "hidden" }}>
       <img
         style={{
           width: "100dvw",
           height: "100dvh",
-          transform: "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1)",
-          transformOrigin: "bottom left",
+          transform: `matrix3d(${matrix.toArray().join(", ")})`,
+          transformOrigin: "top left",
         }}
         alt="AprilTag"
         src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"

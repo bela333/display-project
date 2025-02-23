@@ -33,3 +33,7 @@ export function screenConfig(room: string, screen: number) {
 export function screenPing(room: string, screen: number) {
   return `${screenRoot(room, screen)}:ping`;
 }
+
+export function screenHomography(room: string, screen: number) {
+  return `${screenRoot(room, screen)}:homography`;
+}

@@ -92,6 +92,7 @@ def process_image(
         # and bottom right corner is (screen.screenSize[0], screen.screenSize[1])
         # currently they are (0, 0) and (1, 1)
         homography = homography.dot(np.array(([1/screen.screenSize[0], 0, 0], [0, 1/screen.screenSize[1], 0], [0, 0, 1])))
+        homography = np.array(([screen.screenSize[0]/grayscale.shape[1], 0, 0], [0, screen.screenSize[1]/grayscale.shape[0], 0], [0, 0, 1])).dot(homography)
         response_screens.append({"id": screen.id, "homography": homography.tolist()})
     print(response_screens)
     return response_screens
