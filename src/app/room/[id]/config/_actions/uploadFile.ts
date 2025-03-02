@@ -30,10 +30,13 @@ type ApriltagResponse = z.infer<typeof apriltagResponse>;
 export default async function uploadFile(params: FormData) {
   const room = params.get("room");
   const file = params.get("file");
+  if (file === null) {
+    return;
+  }
   const roomRes = await codeValidation().safeParseAsync(room);
 
   if (!roomRes.success) {
-    return null;
+    return;
     /*return {
       errors: res.error.flatten().fieldErrors,
     };*/
@@ -92,5 +95,5 @@ export default async function uploadFile(params: FormData) {
       )
     )
   );
-  await redis.publish(roomPubSub(room), "ping");
+  await redis.publish(roomPubSub(roomRes.data), "ping");
 }
