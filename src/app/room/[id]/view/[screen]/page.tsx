@@ -6,11 +6,11 @@ import {
   screenContext,
   type ScreenContextType,
 } from "./_contexts/screenContext";
-import roomContext, { type RoomContextType } from "../_contexts/roomContext";
 import Image from "next/image";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { updateScreenBounds } from "./_actions/updateScreenBounds";
 import * as math from "mathjs";
+import roomContext, { type RoomContextType } from "../../_contexts/roomContext";
 
 function ViewingPage({
   room,

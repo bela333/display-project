@@ -6,9 +6,12 @@ import { roomPubSub, roomScreenCount } from "@/app/db/redis-keys";
 export default async function ViewLayout({
   children,
   params,
-}: Readonly<{ children?: ReactNode; params: Promise<{ id: string }> }>) {
+}: Readonly<{
+  children?: ReactNode;
+  params: Promise<{ id: string; screen: string }>;
+}>) {
   const room = (await params).id;
-  const screen = await redis.incr(roomScreenCount(room));
+  const screen = Number((await params).screen);
   await redis.publish(roomPubSub(room), "ping");
   return (
     <ScreenContextProvider screenID={screen} roomID={room}>

@@ -1,4 +1,4 @@
-import { deregisterScreen } from "../room/[id]/view/_actions/screenRegistration";
+import { deregisterScreen } from "../room/[id]/view/[screen]/_actions/screenRegistration";
 import type globalRedis from "./redis";
 
 const screenKeyRegex = /^room:([^:]+):screen:(\d+):ping$/;
