@@ -1,0 +1,27 @@
+services:
+  main:
+    image: node
+    working_dir: "/mainservice"
+    command: /bin/bash start.sh
+    ports:
+      - 3000:3000
+    volumes:
+      - ./mainservice:/mainservice
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - APRILTAG_URL=http://apriltag:8000
+  redis:
+    image: redis
+    command: redis-server
+    volumes:
+      - redisvolume:/data
+  apriltag:
+    build: apriltagservice
+    ports:
+      - 8000:8000
+    command: /usr/local/bin/fastapi dev --host 0.0.0.0
+    volumes:
+      - ./apriltagservice:/apriltagservice
+
+volumes:
+  redisvolume:

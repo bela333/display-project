@@ -3,5 +3,5 @@ export const CODE_ALPHABET = "ABCDEFGHIKMNOPRS";
 export const CODE_REGEX = new RegExp(`^[^:]+`);
 export const EXPIRE_SECONDS = 60 * 60 * 24; // 1 calendar day
 
-export const PING_INTERVAL = 15;
-export const PING_TIMEOUT = 30;
+export const PING_INTERVAL = 30;
+export const PING_TIMEOUT = 120;

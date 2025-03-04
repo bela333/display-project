@@ -56,6 +56,7 @@ def construct_code_homography(screen: Screen):
         )
     )
 
+Response = t.TypedDict('Response', {'id': int, 'homography': list})
 
 @app.post("/")
 def process_image(
@@ -69,9 +70,9 @@ def process_image(
     # Find tags
     tags = detector.detect(grayscale)
 
-    response_screens = []
-
     # TODO: Try to fit all tags on a single surface
+
+    homographies: t.Dict[int, np.ndarray] = {}
 
     for tag in tags:
         # Find screen corresponding to tag
@@ -91,6 +92,41 @@ def process_image(
         # so top left corner is (0, 0)
         # and bottom right corner is (1, 1)
         homography = np.array(([1/grayscale.shape[1], 0, 0], [0, 1/grayscale.shape[0], 0], [0, 0, 1])).dot(homography)
-        response_screens.append({"id": screen.id, "homography": homography.tolist()})
-    print(response_screens)
+        homographies[screen.id] = homography
+
+    # TODO: Move this math over to the frontend
+    # We want to have a common coordinate system for every screen
+    # based on the screen with the smallest ID
+    template = min(homographies.items(), key=lambda a: a[0])[1]
+    template_inv = np.linalg.inv(template)
+
+    (left, top, right, bottom) = (0, 0, 1, 1)
+
+    # Find corners of virtual screen in template's coordinate system
+    for id, homography in homographies.items():
+        h = template_inv.dot(homography)
+        for x in range(0, 2):
+            for y in range(0, 2):
+                p = h.dot((x, y, 1))
+                p /= p[2]
+                left = min(left, p[0])
+                top = min(top, p[1])
+                right = max(right, p[0])
+                bottom = max(bottom, p[1])
+    
+    # We can use these corners to calculate the homography for the virtual screen
+    virtual = template.dot([[right-left, 0, left], [0, bottom-top, top], [0, 0, 1]])
+    virtual_inv = np.linalg.inv(virtual)
+    
+
+    # Then we embed every screen homography into the coordinate system of the virtual screen
+    for id, homography in homographies.items():
+        homography = virtual_inv.dot(homography)
+        homography /= homography[2][2]
+        homographies[id] = homography
+
+
+
+
+    response_screens: t.List[Response] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
     return response_screens
