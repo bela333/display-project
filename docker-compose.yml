@@ -1,0 +1,10 @@
+services:
+  main:
+    image: node
+    working_dir: '/mainservice'
+    command: /bin/bash start.sh
+    volumes:
+      - ./mainservice:/mainservice
+    environment:
+      - REDIS_URL="redis://redis:6379"
+      - APRILTAG_URL="http://apriltag:8000"
