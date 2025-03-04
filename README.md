@@ -1,5 +1,14 @@
 # Display Project
 
+## 20205-03-03 week
+
+- [ ] Move plane logic to frontend
+- [ ] Don't put homography into redis automatically
+- [ ] Let user select which plane to use
+- [ ] Create new "Configuration" page
+
+## Others
+
 Immediate TODO:
 
 - [ ] Actually remove screen on disconnect
