@@ -22,6 +22,20 @@ export function roomScreenAvailable(room: string) {
   return `${roomRoot(room)}:available`;
 }
 
+export function roomImageRoot(room: string) {
+  return `${roomRoot(room)}:image`;
+}
+
+export function roomImageName(room: string) {
+  return roomImageRoot(room);
+}
+export function roomImageWidth(room: string) {
+  return `${roomImageRoot(room)}:width`;
+}
+export function roomImageHeight(room: string) {
+  return `${roomImageRoot(room)}:height`;
+}
+
 export function screenRoot(room: string, screen: number) {
   return `${roomRoot(room)}:screen:${screen}`;
 }

@@ -63,7 +63,7 @@ def construct_code_homography(screen: Screen):
         )
     )
 
-Response = t.TypedDict('Response', {'id': int, 'homography': list})
+ResponseScreen = t.TypedDict('Response', {'id': int, 'homography': list})
 
 @app.post("/")
 def process_image(
@@ -132,5 +132,10 @@ def process_image(
         homography /= homography[2][2]
         homographies[id] = homography
 
-    response_screens: t.List[Response] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
-    return response_screens
+    response_screens: t.List[ResponseScreen] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
+    resp = {
+        "screens": response_screens,
+        "width": grayscale.shape[1],
+        "height": grayscale.shape[0],
+    }
+    return resp

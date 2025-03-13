@@ -1,6 +1,9 @@
 import { screenConfigZod, type ScreenConfig } from "@/lib/screenConfig";
 import redis from "./redis";
 import {
+  roomImageHeight,
+  roomImageName,
+  roomImageWidth,
   roomMode,
   roomScreenAvailable,
   roomScreenCount,
@@ -16,6 +19,13 @@ export type SerializedScreen = ScreenConfig & {
   homography?: [MatrixRow, MatrixRow, MatrixRow];
 };
 
+export type SerializedImage = {
+  filename: string;
+  url: string;
+  width: number;
+  height: number;
+};
+
 export type Modes = "calibration" | "viewing";
 
 export type SerializedRoom = {
@@ -23,6 +33,7 @@ export type SerializedRoom = {
   // TODO: This is a horrible name wtf
   screenLocals: SerializedScreen[];
   mode: Modes;
+  image?: SerializedImage;
 };
 
 export const serializeScreen = async (
@@ -76,9 +87,24 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
     throw new Error(`Invalid mode: ${mode}`);
   }
 
+  const filename = await redis.get(roomImageName(room));
+  const width = Number(await redis.get(roomImageWidth(room)));
+  const height = Number(await redis.get(roomImageHeight(room)));
+
+  const image: SerializedImage =
+    filename && width && height
+      ? {
+          filename,
+          height,
+          width,
+          url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`,
+        }
+      : undefined;
+
   return {
     screenCount: Number(screenCount),
     screenLocals: screenLocals,
     mode,
+    image,
   };
 };

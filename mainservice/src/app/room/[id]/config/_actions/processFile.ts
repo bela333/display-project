@@ -3,6 +3,9 @@
 import { serializeScreen } from "@/app/db/_serialization";
 import redis from "@/app/db/redis";
 import {
+  roomImageHeight,
+  roomImageName,
+  roomImageWidth,
   roomPubSub,
   roomScreenAvailable,
   screenHomography,
@@ -18,12 +21,16 @@ type ApriltagScreenRequest = {
   codeSize: number;
 };
 
-const apriltagResponse = z.array(
-  z.object({
-    id: z.number(),
-    homography: z.array(z.array(z.number()).length(3)).length(3),
-  })
-);
+const apriltagResponse = z.object({
+  width: z.number(),
+  height: z.number(),
+  screens: z.array(
+    z.object({
+      id: z.number(),
+      homography: z.array(z.array(z.number()).length(3)).length(3),
+    })
+  ),
+});
 
 type ApriltagResponse = z.infer<typeof apriltagResponse>;
 
@@ -82,7 +89,7 @@ export default async function processFile(room: string, filename: string) {
   );
 
   await Promise.all(
-    respJson.map((screenResponse) =>
+    respJson.screens.map((screenResponse) =>
       redis.set(
         screenHomography(roomRes.data, screenResponse.id),
         JSON.stringify(screenResponse.homography),
@@ -92,5 +99,10 @@ export default async function processFile(room: string, filename: string) {
       )
     )
   );
+
+  await redis.set(roomImageName(roomRes.data), filename);
+  await redis.set(roomImageWidth(roomRes.data), respJson.width);
+  await redis.set(roomImageHeight(roomRes.data), respJson.height);
+
   await redis.publish(roomPubSub(roomRes.data), "ping");
 }
