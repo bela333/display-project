@@ -16,12 +16,9 @@ export default function Config() {
 
   const onUpload = useCallback(
     async (filename: string) => {
-      if (!room) {
-        return;
-      }
-      await processFile(room.roomID, filename);
+      await processFile(id, filename);
     },
-    [room]
+    [id]
   );
 
   return (
