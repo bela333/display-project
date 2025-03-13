@@ -4,6 +4,13 @@ from pydantic import BaseModel, Json
 import cv2
 import numpy as np
 from pupil_apriltags import Detector
+import requests
+from os import environ
+
+assert environ.get("S3_ENDPOINT_INTERNAL")
+assert environ.get("S3_BUCKET")
+S3_ENDPOINT_INTERNAL = environ.get("S3_ENDPOINT_INTERNAL")
+S3_BUCKET = environ.get("S3_BUCKET")
 
 app = FastAPI()
 
@@ -32,7 +39,7 @@ class ProcessRequest(BaseModel):
     Attributes:
         screens (List[Screen]): A list of Screen objects to be processed.
     """
-
+    filename: str
     screens: t.List[Screen]
 
 
@@ -60,24 +67,24 @@ Response = t.TypedDict('Response', {'id': int, 'homography': list})
 
 @app.post("/")
 def process_image(
-    file: t.Annotated[bytes, File()], params: t.Annotated[Json[ProcessRequest], Form()]
+    req: ProcessRequest
 ):
+    file = requests.get(f"{S3_ENDPOINT_INTERNAL}/{S3_BUCKET}/{req.filename}")
+
     image = cv2.imdecode(
-        np.asarray(bytearray(file), dtype="uint8"), cv2.IMREAD_COLOR_BGR
+        np.asarray(bytearray(file.content), dtype="uint8"), cv2.IMREAD_COLOR_BGR
     )
     grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Find tags
     tags = detector.detect(grayscale)
 
-    # TODO: Try to fit all tags on a single surface
-
     homographies: t.Dict[int, np.ndarray] = {}
 
     for tag in tags:
         # Find screen corresponding to tag
         screen = next(
-            (screen for screen in params.screens if screen.id == tag.tag_id), None
+            (screen for screen in req.screens if screen.id == tag.tag_id), None
         )
         if screen is None:
             continue
@@ -124,9 +131,6 @@ def process_image(
         homography = virtual_inv.dot(homography)
         homography /= homography[2][2]
         homographies[id] = homography
-
-
-
 
     response_screens: t.List[Response] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
     return response_screens

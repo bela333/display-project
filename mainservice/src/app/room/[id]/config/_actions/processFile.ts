@@ -27,12 +27,7 @@ const apriltagResponse = z.array(
 
 type ApriltagResponse = z.infer<typeof apriltagResponse>;
 
-export default async function uploadFile(params: FormData) {
-  const room = params.get("room");
-  const file = params.get("file");
-  if (file === null) {
-    return;
-  }
+export default async function processFile(room: string, filename: string) {
   const roomRes = await codeValidation().safeParseAsync(room);
 
   if (!roomRes.success) {
@@ -42,7 +37,7 @@ export default async function uploadFile(params: FormData) {
     };*/
   }
 
-  // Get code informatio for room
+  // Get code information for room
   const screens: ApriltagScreenRequest[] = [];
 
   const screenIds: string[] = await redis.sMembers(
@@ -71,13 +66,15 @@ export default async function uploadFile(params: FormData) {
 
   // Send request to microservice
 
-  const req = new FormData();
-  req.append("params", JSON.stringify({ screens }));
-  req.append("file", file);
-
   const resp = await fetch(`${process.env.APRILTAG_URL}`, {
     method: "POST",
-    body: req,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename,
+      screens,
+    }),
   });
 
   const respJson: ApriltagResponse = await apriltagResponse.parseAsync(

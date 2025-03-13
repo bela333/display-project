@@ -1,26 +1,29 @@
 "use client";
-import {
-  Button,
-  Center,
-  FileInput,
-  Flex,
-  Paper,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { use } from "react";
+import { Button, Center, Paper, Stack, Text, TextInput } from "@mantine/core";
+import { use, useCallback } from "react";
 import { useParams } from "next/navigation";
 import sendMessage from "./_actions/sendMessage";
 import roomContext from "../_contexts/roomContext";
 import Link from "next/link";
 import changeMode from "./_actions/changeMode";
-import uploadFile from "./_actions/uploadFile";
+import processFile from "./_actions/processFile";
+import ApriltagImageDropzone from "@/app/_components/ApriltagImageDropzone";
 
 export default function Config() {
   const { id }: { id: string } = useParams();
   const room = use(roomContext);
   const mode = room?.lastEvent.mode ?? "calibration";
+
+  const onUpload = useCallback(
+    async (filename: string) => {
+      if (!room) {
+        return;
+      }
+      await processFile(room.roomID, filename);
+    },
+    [room]
+  );
+
   return (
     <>
       <Stack>
@@ -50,13 +53,7 @@ export default function Config() {
             Return to configuration
           </Button>
         )}
-        <form action={uploadFile}>
-          <Flex direction="row" style={{ width: "100%" }}>
-            <input type="hidden" name="room" value={room?.roomID} />
-            <FileInput name="file" label="Upload picture here" />
-            <Button type="submit">Send</Button>
-          </Flex>
-        </form>
+        <ApriltagImageDropzone onUpload={onUpload} />
       </Stack>
     </>
   );

@@ -1,7 +1,7 @@
 FROM python
 WORKDIR /apriltagservice
 ADD requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --default-timeout=10000 -r requirements.txt
 
 ADD * ./
 
