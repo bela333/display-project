@@ -41,6 +41,7 @@ class ProcessRequest(BaseModel):
     """
     filename: str
     screens: t.List[Screen]
+    upload_url: t.Optional[str]
 
 
 detector = Detector()
@@ -101,10 +102,10 @@ def process_image(
         homography = np.array(([1/grayscale.shape[1], 0, 0], [0, 1/grayscale.shape[0], 0], [0, 0, 1])).dot(homography)
         homographies[screen.id] = homography
 
-    # TODO: Move this math over to the frontend
     # We want to have a common coordinate system for every screen
     # based on the screen with the smallest ID
-    template = min(homographies.items(), key=lambda a: a[0])[1]
+    template_id = min(homographies.items(), key=lambda a: a[0])[0]
+    template = homographies[template_id]
     template_inv = np.linalg.inv(template)
 
     (left, top, right, bottom) = (0, 0, 1, 1)
@@ -133,9 +134,27 @@ def process_image(
         homographies[id] = homography
 
     response_screens: t.List[ResponseScreen] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
+
+    template_screen = next(a for a in req.screens if a.id == template_id)
+    inner_width = abs(right-left)
+    inner_height = abs(bottom-top)
+    width = int(template_screen.screenSize[0]*inner_width)
+    height = int(template_screen.screenSize[1]*inner_height)
+
+    if req.upload_url is not None:
+        imagespace_virtual = np.matrix(((image.shape[1], 0, 0), (0, image.shape[0], 0), (0, 0, 1))) * virtual * np.matrix(((1/width, 0, 0), (0, 1/height, 0), (0, 0, 1)))
+        imagespace_virtual = np.linalg.inv(imagespace_virtual)
+        generated = cv2.warpPerspective(image,imagespace_virtual, (width, height))
+        res, generated_image = cv2.imencode(".jpg", generated)
+        if not res:
+            # TODO: Handle error
+            pass
+        generated_image = bytes(generated_image)
+        requests.put(req.upload_url, generated_image) # TODO: Handle error
+
     resp = {
         "screens": response_screens,
-        "width": grayscale.shape[1],
-        "height": grayscale.shape[0],
+        "width": width,
+        "height": height,
     }
     return resp

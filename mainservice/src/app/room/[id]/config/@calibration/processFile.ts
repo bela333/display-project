@@ -11,7 +11,10 @@ import {
   screenHomography,
 } from "@/app/db/redis-keys";
 import { EXPIRE_SECONDS } from "@/lib/consts";
+import { s3Client_internal } from "@/lib/s3";
 import { codeValidation } from "@/lib/utils";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
 
 type ApriltagScreenRequest = {
@@ -71,8 +74,20 @@ export default async function processFile(room: string, filename: string) {
     });
   }
 
-  // Send request to microservice
+  const [name, extension] = filename.split(".");
+  const warpedname = `${name}.warped.jpg`;
 
+  // Create PUT URL for result image upload
+  //TODO: Add expiry
+  const req = new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET,
+    Key: warpedname,
+  });
+  const upload_url = await getSignedUrl(s3Client_internal, req, {
+    expiresIn: 300,
+  });
+
+  // Send request to microservice
   const resp = await fetch(`${process.env.APRILTAG_URL}`, {
     method: "POST",
     headers: {
@@ -81,6 +96,7 @@ export default async function processFile(room: string, filename: string) {
     body: JSON.stringify({
       filename,
       screens,
+      upload_url,
     }),
   });
 
@@ -100,7 +116,7 @@ export default async function processFile(room: string, filename: string) {
     )
   );
 
-  await redis.set(roomImageName(roomRes.data), filename, {
+  await redis.set(roomImageName(roomRes.data), warpedname, {
     EX: EXPIRE_SECONDS,
   });
   await redis.set(roomImageWidth(roomRes.data), respJson.width, {
@@ -111,4 +127,5 @@ export default async function processFile(room: string, filename: string) {
   });
 
   await redis.publish(roomPubSub(roomRes.data), "ping");
+  return warpedname;
 }

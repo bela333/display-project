@@ -3,19 +3,10 @@ import {
   CALIBRATION_SUPPORTED_EXTENSIONS,
   MAXIMUM_FILESIZE,
 } from "@/lib/consts";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client } from "@/lib/s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
-
-const s3Client = new S3Client({
-  region: process.env.S3_REGION,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  },
-  endpoint: process.env.S3_ENDPOINT,
-  forcePathStyle: true,
-});
 
 export async function requestFileUpload(filename: string, filesize: number) {
   if (filesize > MAXIMUM_FILESIZE) {
@@ -33,7 +24,7 @@ export async function requestFileUpload(filename: string, filesize: number) {
   }
 
   const uploadedFilename = `${randomUUID()}.${extension}`;
-
+  //TODO: Add expiry
   const req = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: uploadedFilename,
