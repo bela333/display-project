@@ -3,7 +3,7 @@ import { Box } from "@mantine/core";
 import { use, useState } from "react";
 
 import * as math from "mathjs";
-import { useElementSize } from "../useElementSize";
+import { useElementSize } from "../../../../../useElementSize";
 import roomContext from "../../../_contexts/roomContext";
 import { screenContext } from "../_contexts/screenContext";
 
@@ -16,7 +16,7 @@ export default function ViewingPage() {
   }
 
   const [screenBounds, setScreenBounds] = useState([1, 1]);
-  useElementSize(document.body, room.roomID, screen.screenID, (r, s, bounds) =>
+  useElementSize(document.body, (bounds) =>
     setScreenBounds([bounds.width, bounds.height])
   );
 

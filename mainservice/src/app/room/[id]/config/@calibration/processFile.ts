@@ -100,9 +100,15 @@ export default async function processFile(room: string, filename: string) {
     )
   );
 
-  await redis.set(roomImageName(roomRes.data), filename);
-  await redis.set(roomImageWidth(roomRes.data), respJson.width);
-  await redis.set(roomImageHeight(roomRes.data), respJson.height);
+  await redis.set(roomImageName(roomRes.data), filename, {
+    EX: EXPIRE_SECONDS,
+  });
+  await redis.set(roomImageWidth(roomRes.data), respJson.width, {
+    EX: EXPIRE_SECONDS,
+  });
+  await redis.set(roomImageHeight(roomRes.data), respJson.height, {
+    EX: EXPIRE_SECONDS,
+  });
 
   await redis.publish(roomPubSub(roomRes.data), "ping");
 }

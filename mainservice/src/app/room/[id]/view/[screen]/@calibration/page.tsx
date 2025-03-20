@@ -1,17 +1,12 @@
 "use client";
 import { useDebouncedCallback } from "@mantine/hooks";
-import roomContext, {
-  type RoomContextType,
-} from "../../../_contexts/roomContext";
-import {
-  screenContext,
-  type ScreenContextType,
-} from "../_contexts/screenContext";
+import roomContext from "../../../_contexts/roomContext";
+import { screenContext } from "../_contexts/screenContext";
 import { updateScreenBounds } from "../_actions/updateScreenBounds";
 import { use, useState } from "react";
 import { Box, Flex, Text } from "@mantine/core";
 import Image from "next/image";
-import { useElementSize } from "../useElementSize";
+import { useElementSize } from "@/app/useElementSize";
 
 export default function CalibrationPage() {
   const room = use(roomContext);
@@ -24,21 +19,18 @@ export default function CalibrationPage() {
   const roomID = room.roomID;
   const screenID = screen.screenID;
 
-  const setBounds = useDebouncedCallback(
-    async (roomID: string, screenID: number, rect: DOMRectReadOnly) => {
-      await updateScreenBounds(roomID, screenID, {
-        width: rect.width,
-        height: rect.height,
-        x: rect.x,
-        y: rect.y,
-      });
-    },
-    1000
-  );
+  const setBounds = useDebouncedCallback(async (rect: DOMRectReadOnly) => {
+    await updateScreenBounds(roomID, screenID, {
+      width: rect.width,
+      height: rect.height,
+      x: rect.x,
+      y: rect.y,
+    });
+  }, 1000);
 
   const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
 
-  useElementSize(imageRef, roomID, screenID, setBounds);
+  useElementSize(imageRef, setBounds);
 
   const tagID = String(screen.screenID).padStart(5, "0");
   return (

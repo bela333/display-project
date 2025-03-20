@@ -9,14 +9,15 @@ import {
 } from "@mantine/core";
 import roomContext from "../_contexts/roomContext";
 import { use, useCallback, useState } from "react";
-import changeMode from "./_actions/changeMode";
+import changeMode from "./changeMode";
 import { useParams } from "next/navigation";
 import { type Modes } from "@/app/db/_serialization";
 import Link from "next/link";
 
 export default function ConfigLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+  calibration,
+  viewing,
+}: Readonly<{ calibration: React.ReactNode; viewing: React.ReactNode }>) {
   const { id }: { id: string } = useParams();
   const room = use(roomContext);
 
@@ -39,7 +40,7 @@ export default function ConfigLayout({
       <LoadingOverlay visible={loading} />
       {/* Toolbar */}
       <Flex justify="space-between" direction="row" m={10} mt={0}>
-        <Text>Logo here</Text>
+        <Text>Room ID: {room.roomID}</Text>
         <SegmentedControl
           value={room.lastEvent.mode}
           onChange={onChange}
@@ -52,7 +53,13 @@ export default function ConfigLayout({
           View
         </Button>
       </Flex>
-      <Box>{children}</Box>
+      <Box>
+        {room.lastEvent.mode === "calibration"
+          ? calibration
+          : room.lastEvent.mode === "viewing"
+          ? viewing
+          : null}
+      </Box>
     </Flex>
   );
 }
