@@ -1,13 +1,13 @@
 import { Button, FileButton } from "@mantine/core";
 import { useCallback, useState } from "react";
-import { requestFileUpload } from "./requestFileUpload";
+import { requestApriltagUpload } from "./requestApriltagUpload";
 import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
 
 export type Props = {
   onUpload: (filename: string) => void;
 };
 
-export default function ApriltagImageButton({ onUpload }: Props) {
+export default function ApriltagUploadButton({ onUpload }: Props) {
   const [loading, setLoading] = useState(false);
 
   const onChange = useCallback(
@@ -17,7 +17,7 @@ export default function ApriltagImageButton({ onUpload }: Props) {
         if (!file) {
           return; // TODO: Handle error
         }
-        const resp = await requestFileUpload(file.name, file.size);
+        const resp = await requestApriltagUpload(file.name, file.size);
         if (!resp.ok) {
           alert(resp.message);
           return; // TODO: Handle error BETTER

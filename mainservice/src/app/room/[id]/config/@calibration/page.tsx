@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import processFile from "./processFile";
 
 import PreviewImage from "./PreviewImage";
-import ApriltagImageButton from "@/app/_components/ApriltagImageButton";
+import ApriltagUploadButton from "./ApriltagUploadButton";
 
 export default function ConfigCalibration() {
   const { id }: { id: string } = useParams();
@@ -20,7 +20,7 @@ export default function ConfigCalibration() {
   return (
     <Container>
       <Stack>
-        <ApriltagImageButton onUpload={onUpload} />
+        <ApriltagUploadButton onUpload={onUpload} />
         <PreviewImage />
       </Stack>
     </Container>

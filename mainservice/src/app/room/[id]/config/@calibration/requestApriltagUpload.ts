@@ -8,7 +8,10 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
 
-export async function requestFileUpload(filename: string, filesize: number) {
+export async function requestApriltagUpload(
+  filename: string,
+  filesize: number
+) {
   if (filesize > MAXIMUM_FILESIZE) {
     return { message: "File too large.", ok: false as const };
   }
