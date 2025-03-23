@@ -104,6 +104,7 @@ export default async function processFile(room: string, filename: string) {
     await resp.json()
   );
 
+  // TODO: Remove homographies that don't appear in the response
   await Promise.all(
     respJson.screens.map((screenResponse) =>
       redis.set(
