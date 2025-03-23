@@ -83,6 +83,9 @@ export default function ViewingPage() {
       >
         {room.lastEvent.content.type === "none" ? (
           <Image
+            w="100%"
+            h="100%"
+            fit="fill"
             alt="AprilTag"
             src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
           />

@@ -33,6 +33,7 @@ export const MEDIA_SUPPORTED_MIME = [
   "image/avif",
   "image/heic",
   "image/heif",
+  "image/gif",
 ] as const;
 export const MEDIA_SUPPORTED_EXTENSIONS = [
   "png",
@@ -42,4 +43,5 @@ export const MEDIA_SUPPORTED_EXTENSIONS = [
   "avif",
   "heic",
   "heif",
+  "gif",
 ] as const;

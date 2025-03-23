@@ -27,9 +27,9 @@ class Screen(BaseModel):
     """
 
     id: int
-    screenSize: t.Tuple[int, int]
+    screenSize: tuple[int, int]
     codeSize: int
-    codeOffset: t.Tuple[int, int]
+    codeOffset: tuple[int, int]
 
 
 class ProcessRequest(BaseModel):
@@ -40,8 +40,8 @@ class ProcessRequest(BaseModel):
         screens (List[Screen]): A list of Screen objects to be processed.
     """
     filename: str
-    screens: t.List[Screen]
-    upload_url: t.Optional[str]
+    screens: list[Screen]
+    upload_url: str | None
 
 
 detector = Detector()
@@ -80,7 +80,7 @@ def process_image(
     # Find tags
     tags = detector.detect(grayscale)
 
-    homographies: t.Dict[int, np.ndarray] = {}
+    homographies: dict[int, np.ndarray] = {}
 
     for tag in tags:
         # Find screen corresponding to tag
@@ -133,7 +133,7 @@ def process_image(
         homography /= homography[2][2]
         homographies[id] = homography
 
-    response_screens: t.List[ResponseScreen] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
+    response_screens: list[ResponseScreen] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
 
     template_screen = next(a for a in req.screens if a.id == template_id)
     inner_width = abs(right-left)
