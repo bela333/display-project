@@ -5,13 +5,15 @@ import { useParams } from "next/navigation";
 import processFile from "./processFile";
 
 import PreviewImage from "./PreviewImage";
-import ApriltagUploadButton from "./ApriltagUploadButton";
+import RoomUploadButton from "../../_components/RoomUploadButton";
+import { handleApriltagUpload } from "./handleApriltagUpload";
+import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
 
 export default function ConfigCalibration() {
   const { id }: { id: string } = useParams();
 
   const onUpload = useCallback(
-    async (filename: string) => {
+    async ({ filename }: { filename: string }) => {
       await processFile(id, filename);
     },
     [id]
@@ -20,7 +22,12 @@ export default function ConfigCalibration() {
   return (
     <Container>
       <Stack>
-        <ApriltagUploadButton onUpload={onUpload} />
+        <RoomUploadButton
+          onUpload={onUpload}
+          handleRequest={handleApriltagUpload}
+          supportedMimeTypes={CALIBRATION_SUPPORTED_MIME}
+          title="Upload calibration image"
+        />
         <PreviewImage />
       </Stack>
     </Container>

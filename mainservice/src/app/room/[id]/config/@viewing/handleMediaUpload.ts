@@ -1,27 +1,37 @@
 "use server";
 import {
-  CALIBRATION_SUPPORTED_EXTENSIONS,
-  MAXIMUM_FILESIZE,
+  MAXIMUM_MEDIA_FILESIZE,
+  MEDIA_SUPPORTED_EXTENSIONS,
 } from "@/lib/consts";
-import { s3Client } from "@/lib/s3";
+import {
+  type RoomUploadHandlerNeg,
+  type RoomUploadHandlerPos,
+} from "../../_components/RoomUploadButton";
+import { randomUUID } from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { randomUUID } from "crypto";
+import { s3Client } from "@/lib/s3";
 
-export async function requestApriltagUpload(
+export type HandleMediaUploadPos = RoomUploadHandlerPos & {
+  filename: string;
+};
+
+export async function handleMediaUpload(
   filename: string,
   filesize: number
-) {
-  if (filesize > MAXIMUM_FILESIZE) {
-    return { message: "File too large.", ok: false as const };
+): Promise<HandleMediaUploadPos | RoomUploadHandlerNeg> {
+  if (filesize > MAXIMUM_MEDIA_FILESIZE) {
+    return {
+      ok: false,
+      message: "File too large.",
+    };
   }
-
   const filenameParts = filename.split(".");
   const extension = filenameParts.at(filenameParts.length - 1);
 
   if (
     !extension ||
-    !CALIBRATION_SUPPORTED_EXTENSIONS.find((ext) => ext === extension)
+    !MEDIA_SUPPORTED_EXTENSIONS.find((ext) => ext === extension)
   ) {
     return { ok: false as const, message: "Invalid extension" };
   }

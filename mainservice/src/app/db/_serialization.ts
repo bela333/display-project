@@ -1,6 +1,8 @@
 import { screenConfigZod, type ScreenConfig } from "@/lib/screenConfig";
 import redis from "./redis";
 import {
+  roomContentFilename,
+  roomContentType,
   roomImageHeight,
   roomImageName,
   roomImageWidth,
@@ -26,6 +28,10 @@ export type SerializedImage = {
   height: number;
 };
 
+export type SerializedContent =
+  | { type: "none" }
+  | { type: "image"; filename: string; url: string };
+
 export type Modes = "calibration" | "viewing";
 
 export type SerializedRoom = {
@@ -34,6 +40,7 @@ export type SerializedRoom = {
   screenLocals: SerializedScreen[];
   mode: Modes;
   image?: SerializedImage;
+  content: SerializedContent;
 };
 
 export const serializeScreen = async (
@@ -91,7 +98,7 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
   const width = Number(await redis.get(roomImageWidth(room)));
   const height = Number(await redis.get(roomImageHeight(room)));
 
-  const image: SerializedImage =
+  const image: SerializedImage | undefined =
     filename && width && height
       ? {
           filename,
@@ -101,10 +108,33 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
         }
       : undefined;
 
+  const contentType = await redis.get(roomContentType(room));
+  let parsedContentType: "none" | "image" = "none";
+
+  if (contentType !== null && contentType === "image") {
+    parsedContentType = "image";
+  }
+
+  let content: SerializedContent = { type: "none" };
+
+  if (parsedContentType === "image") {
+    const filename = await redis.get(roomContentFilename(room));
+
+    content = {
+      type: "image",
+      filename: filename ?? "",
+      url:
+        filename !== null
+          ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
+          : "",
+    };
+  }
+
   return {
     screenCount: Number(screenCount),
     screenLocals: screenLocals,
     mode,
     image,
+    content,
   };
 };

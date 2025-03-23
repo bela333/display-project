@@ -1,6 +1,6 @@
 "use client";
-import { Box } from "@mantine/core";
-import { use, useState } from "react";
+import { Box, Image } from "@mantine/core";
+import { use, useCallback, useState } from "react";
 
 import * as math from "mathjs";
 import { useElementSize } from "../../../../../useElementSize";
@@ -16,9 +16,11 @@ export default function ViewingPage() {
   }
 
   const [screenBounds, setScreenBounds] = useState([1, 1]);
-  useElementSize(document.body, (bounds) =>
-    setScreenBounds([bounds.width, bounds.height])
+  const elementSizeCallback = useCallback(
+    (bounds: DOMRectReadOnly) => setScreenBounds([bounds.width, bounds.height]),
+    [setScreenBounds]
   );
+  useElementSize(document.body, elementSizeCallback);
 
   const screenLocal = room.lastEvent.screenLocals.find(
     (local) => local.id === String(screen.screenID)
@@ -40,32 +42,61 @@ export default function ViewingPage() {
     [0, screenBounds[1] ?? 1, 0],
     [0, 0, 1],
   ]);
-  const screenSizeInv = math.inv(screenSize);
+  const screenSizeInv = math.matrix([
+    [1 / (screenBounds[0] ?? 1), 0, 0],
+    [0, 1 / (screenBounds[1] ?? 1), 0],
+    [0, 0, 1],
+  ]);
 
-  homography = math.multiply(screenSizeInv, homography, screenSize);
+  const makeWholeScreen = math.matrix([
+    [(screenBounds[0] ?? 1) / (room.lastEvent.image?.width ?? 1), 0, 0],
+    [0, (screenBounds[1] ?? 1) / (room.lastEvent.image?.height ?? 1), 0],
+    [0, 0, 1],
+  ]);
+
+  homography = math.inv(homography);
+
+  homography = math.multiply(
+    makeWholeScreen,
+    screenSizeInv,
+    homography,
+    screenSize
+  );
 
   // Column major 3D affine transformation (4x4)
-  let matrix = math.matrix([
+  const matrix = math.matrix([
     [homography.get([0, 0]), homography.get([0, 1]), 0, homography.get([0, 2])],
     [homography.get([1, 0]), homography.get([1, 1]), 0, homography.get([1, 2])],
     [0, 0, homography.get([2, 2]), 0],
     [homography.get([2, 0]), homography.get([2, 1]), 0, homography.get([2, 2])],
   ] as const);
 
-  matrix = math.inv(matrix);
-
   return (
     <Box w="100dvw" h="100dvh" style={{ overflow: "hidden" }}>
-      <img
+      <Box
         style={{
-          width: "100dvw",
-          height: "100dvh",
+          width: room.lastEvent.image?.width,
+          height: room.lastEvent.image?.height,
           transform: `matrix3d(${matrix.toArray().join(", ")})`,
           transformOrigin: "top left",
         }}
-        alt="AprilTag"
-        src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
-      ></img>
+      >
+        {room.lastEvent.content.type === "none" ? (
+          <Image
+            alt="AprilTag"
+            src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
+          />
+        ) : null}
+        {room.lastEvent.content.type === "image" ? (
+          <Image
+            w="100%"
+            h="100%"
+            fit="contain"
+            alt="Image"
+            src={`${room.lastEvent.content.url}`}
+          />
+        ) : null}
+      </Box>
     </Box>
   );
 }

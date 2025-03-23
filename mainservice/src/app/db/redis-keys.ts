@@ -36,6 +36,18 @@ export function roomImageHeight(room: string) {
   return `${roomImageRoot(room)}:height`;
 }
 
+export function roomContentRoot(room: string) {
+  return `${roomRoot(room)}:content`;
+}
+
+export function roomContentType(room: string) {
+  return `${roomContentRoot(room)}:type`;
+}
+
+export function roomContentFilename(room: string) {
+  return `${roomContentRoot(room)}:url`;
+}
+
 export function screenRoot(room: string, screen: number) {
   return `${roomRoot(room)}:screen:${screen}`;
 }

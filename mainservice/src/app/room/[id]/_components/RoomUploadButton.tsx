@@ -1,13 +1,32 @@
 import { Button, FileButton } from "@mantine/core";
 import { useCallback, useState } from "react";
-import { requestApriltagUpload } from "./requestApriltagUpload";
-import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
 
-export type Props = {
-  onUpload: (filename: string) => void;
+export type RoomUploadHandlerPos = {
+  ok: true;
+  url: string;
 };
 
-export default function ApriltagUploadButton({ onUpload }: Props) {
+export type RoomUploadHandlerNeg = {
+  ok: false;
+  message: string;
+};
+
+export type Props<T extends RoomUploadHandlerPos> = {
+  handleRequest: (
+    filename: string,
+    filesize: number
+  ) => Promise<T | RoomUploadHandlerNeg>;
+  onUpload: (resp: T) => void;
+  supportedMimeTypes: readonly string[];
+  title?: string;
+};
+
+export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
+  handleRequest,
+  onUpload,
+  supportedMimeTypes,
+  title,
+}: Props<T>) {
   const [loading, setLoading] = useState(false);
 
   const onChange = useCallback(
@@ -17,7 +36,7 @@ export default function ApriltagUploadButton({ onUpload }: Props) {
         if (!file) {
           return; // TODO: Handle error
         }
-        const resp = await requestApriltagUpload(file.name, file.size);
+        const resp = await handleRequest(file.name, file.size);
         if (!resp.ok) {
           alert(resp.message);
           return; // TODO: Handle error BETTER
@@ -25,22 +44,19 @@ export default function ApriltagUploadButton({ onUpload }: Props) {
         // TODO: Maybe replace this with a XHR, so that we can track progress?
         const req = await fetch(resp.url, { method: "PUT", body: file });
         await req.text();
-        onUpload(resp.filename);
+        onUpload(resp);
       } finally {
         setLoading(false);
       }
     },
-    [onUpload]
+    [onUpload, handleRequest]
   );
 
   return (
-    <FileButton
-      onChange={onChange}
-      accept={[...CALIBRATION_SUPPORTED_MIME].join(",")}
-    >
+    <FileButton onChange={onChange} accept={supportedMimeTypes.join(",")}>
       {(props) => (
         <Button {...props} loading={loading}>
-          Upload calibration image
+          {title ?? "Upload"}
         </Button>
       )}
     </FileButton>
