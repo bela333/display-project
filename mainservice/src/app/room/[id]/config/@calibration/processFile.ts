@@ -15,6 +15,7 @@ import { s3Client_internal } from "@/lib/s3";
 import { codeValidation } from "@/lib/utils";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { DateTime } from "luxon";
 import { z } from "zod";
 
 type ApriltagScreenRequest = {
@@ -78,10 +79,10 @@ export default async function processFile(room: string, filename: string) {
   const warpedname = `${name}.warped.jpg`;
 
   // Create PUT URL for result image upload
-  //TODO: Add expiry
   const req = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: warpedname,
+    Expires: DateTime.now().plus({ days: 1 }).toJSDate(),
   });
   const upload_url = await getSignedUrl(s3Client_internal, req, {
     expiresIn: 300,

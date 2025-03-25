@@ -5,7 +5,7 @@
 TODO:
 
 - [x] Make every screen have a different color in calibration mode
-- [ ] Expire minio files
+- [x] Expire minio files
 - [ ] Create redis dedicated file
   - [ ] Put database access functions here
 - [ ] Actually remove screen on disconnect

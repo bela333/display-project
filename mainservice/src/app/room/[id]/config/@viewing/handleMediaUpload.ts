@@ -11,6 +11,7 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/s3";
+import { DateTime } from "luxon";
 
 export type HandleMediaUploadPos = RoomUploadHandlerPos & {
   filename: string;
@@ -37,11 +38,11 @@ export async function handleMediaUpload(
   }
 
   const uploadedFilename = `${randomUUID()}.${extension}`;
-  //TODO: Add expiry
   const req = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: uploadedFilename,
     ContentLength: filesize,
+    Expires: DateTime.now().plus({ days: 1 }).toJSDate(),
   });
   const url = await getSignedUrl(s3Client, req, { expiresIn: 300 });
   return { url, filename: uploadedFilename, ok: true as const };
