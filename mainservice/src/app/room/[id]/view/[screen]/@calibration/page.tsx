@@ -7,6 +7,7 @@ import { use, useState } from "react";
 import { Box, Flex, Text } from "@mantine/core";
 import Image from "next/image";
 import { useElementSize } from "@/app/useElementSize";
+import { selectColor } from "@/lib/utils";
 
 export default function CalibrationPage() {
   const room = use(roomContext);
@@ -34,7 +35,7 @@ export default function CalibrationPage() {
 
   const tagID = String(screen.screenID).padStart(5, "0");
   return (
-    <Flex direction="row">
+    <Flex direction="row" bg={selectColor(Number(screen.screenID))}>
       <Box w="50vw" h="100vh" style={{ overflow: "auto" }}>
         <Text>
           {room.roomID}:{screen.screenID}

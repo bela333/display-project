@@ -51,6 +51,7 @@ export default function PreviewImage() {
               style={{
                 backgroundImage: `url(${room.lastEvent.image.url})`,
                 backgroundSize: "cover",
+                overflow: "hidden",
               }}
               ref={setImage}
             >

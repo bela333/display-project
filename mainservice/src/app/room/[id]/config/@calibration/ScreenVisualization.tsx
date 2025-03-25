@@ -1,6 +1,7 @@
 "use client";
 import { type SerializedScreen } from "@/app/db/_serialization";
-import { Box, Text } from "@mantine/core";
+import { selectColor } from "@/lib/utils";
+import { Box } from "@mantine/core";
 import * as math from "mathjs";
 
 export default function ScreenVisualization({
@@ -53,13 +54,12 @@ export default function ScreenVisualization({
       left={left}
       top={top}
       style={{
-        backgroundColor: "rgb(0, 255, 0, 0.25)",
-
+        backgroundColor: `color-mix(in srgb, ${selectColor(
+          Number(screen.id)
+        )}, transparent)`,
         transform: `matrix3d(${matrix.toArray().join(", ")})`,
         transformOrigin: "top left",
       }}
-    >
-      <Text p={8}>{screen.id}</Text>
-    </Box>
+    ></Box>
   );
 }

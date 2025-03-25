@@ -4,7 +4,7 @@
 
 TODO:
 
-- [ ] Make every screen have a different color in calibration mode
+- [x] Make every screen have a different color in calibration mode
 - [ ] Expire minio files
 - [ ] Create redis dedicated file
   - [ ] Put database access functions here

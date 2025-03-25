@@ -40,3 +40,9 @@ export function keyToCode(key: number, length = CODE_LENGTH) {
 export function codeValidation() {
   return z.string().length(CODE_LENGTH).regex(CODE_REGEX);
 }
+
+// https://stackoverflow.com/a/20129594
+export function selectColor(i: number) {
+  const hue = i * 137.508; // use golden angle approximation
+  return `hsl(${hue},100%,25%)`;
+}

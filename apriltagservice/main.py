@@ -144,7 +144,7 @@ def process_image(
     if req.upload_url is not None:
         imagespace_virtual = np.matrix(((image.shape[1], 0, 0), (0, image.shape[0], 0), (0, 0, 1))) * virtual * np.matrix(((1/width, 0, 0), (0, 1/height, 0), (0, 0, 1)))
         imagespace_virtual = np.linalg.inv(imagespace_virtual)
-        generated = cv2.warpPerspective(image,imagespace_virtual, (width, height))
+        generated = cv2.warpPerspective(grayscale,imagespace_virtual, (width, height))
         res, generated_image = cv2.imencode(".jpg", generated)
         if not res:
             # TODO: Handle error
