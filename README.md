@@ -12,4 +12,5 @@ TODO:
 - [ ] Remove all homographies on file processing
 - [ ] Add proper error handling when no tags appear on image
 - [ ] Make sure rooms actually exist when changing them
+- [ ] Rearchitecture serialization
 - [ ] SSR room information
