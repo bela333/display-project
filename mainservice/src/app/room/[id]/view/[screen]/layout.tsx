@@ -2,8 +2,7 @@ import { type ReactNode } from "react";
 import ScreenContextProvider from "./_components/ScreenContextProvider";
 
 import { Switcher } from "./Switcher";
-import redis from "@/db/redis";
-import { roomPubSub } from "@/db/redis-keys";
+import roomPubSubObject from "@/db/objects/roomPubSub";
 
 export default async function ViewLayout({
   params,
@@ -16,7 +15,7 @@ export default async function ViewLayout({
 }>) {
   const room = (await params).id;
   const screen = Number((await params).screen);
-  await redis.publish(roomPubSub(room), "ping");
+  await roomPubSubObject.ping(room);
   return (
     <ScreenContextProvider screenID={screen} roomID={room}>
       <Switcher calibration={calibration} viewing={viewing} />

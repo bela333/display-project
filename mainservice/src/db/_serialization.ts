@@ -1,18 +1,11 @@
-import { screenConfigZod, type ScreenConfig } from "@/lib/screenConfig";
-import redis from "./redis";
-import {
-  roomContentFilename,
-  roomContentType,
-  roomImageHeight,
-  roomImageName,
-  roomImageWidth,
-  roomMode,
-  roomScreenAvailable,
-  roomScreenCount,
-  screenConfig,
-  screenHomography,
-} from "./redis-keys";
-import { z } from "zod";
+import { type ScreenConfig } from "@/lib/screenConfig";
+import roomModeObject from "./objects/roomMode";
+import roomScreenCountObject from "./objects/roomScreenCount";
+import roomScreenAvailableObject from "./objects/roomScreenAvailable";
+import roomImageObject from "./objects/roomImage";
+import roomContentObject from "./objects/roomContent";
+import screenConfigObject from "./objects/screenConfig";
+import screenHomographyObject from "./objects/screenHomography";
 
 type MatrixRow = [number, number, number];
 
@@ -47,56 +40,45 @@ export const serializeScreen = async (
   room: string,
   screen: number
 ): Promise<SerializedScreen | null> => {
-  const config = await redis.get(screenConfig(room, screen));
-  if (!config) {
-    return null;
-  }
-  const result = await screenConfigZod.safeParseAsync(JSON.parse(config));
-  if (!result.success) {
+  const config = await screenConfigObject.get(room, screen);
+
+  if (config === null) {
     return null;
   }
 
   const ret: SerializedScreen = {
-    ...result.data,
+    ...config,
     id: String(screen),
   };
 
-  const homographyJson = await redis.get(screenHomography(room, screen));
-  if (homographyJson !== null) {
-    const homography = await z
-      .array(z.array(z.number()).length(3))
-      .length(3)
-      .safeParseAsync(JSON.parse(homographyJson));
-    if (homography.success) {
-      // Type arises from zod parsing
-      ret.homography = homography.data as [MatrixRow, MatrixRow, MatrixRow];
-    }
-  }
+  ret.homography =
+    (await screenHomographyObject.get(room, screen)) ?? undefined;
 
   return ret;
 };
 
 export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
-  const screenCount = await redis.get(roomScreenCount(room));
+  const screenCount = await roomScreenCountObject.get(room);
 
-  const screens = await redis.sMembers(roomScreenAvailable(room));
+  const screens = await roomScreenAvailableObject.members(room);
 
   const screenLocals = (
     await Promise.all(
       screens.map<Promise<SerializedScreen | null>>(async (screen) =>
-        serializeScreen(room, Number(screen))
+        serializeScreen(room, screen)
       )
     )
   ).filter((a) => a !== null);
 
-  const mode = await redis.get(roomMode(room));
+  const mode = await roomModeObject.get(room);
+
   if (mode !== "viewing" && mode !== "calibration") {
     throw new Error(`Invalid mode: ${mode}`);
   }
 
-  const filename = await redis.get(roomImageName(room));
-  const width = Number(await redis.get(roomImageWidth(room)));
-  const height = Number(await redis.get(roomImageHeight(room)));
+  const filename = await roomImageObject.name.get(room);
+  const width = await roomImageObject.width.get(room);
+  const height = await roomImageObject.height.get(room);
 
   const image: SerializedImage | undefined =
     filename && width && height
@@ -108,17 +90,12 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
         }
       : undefined;
 
-  const contentType = await redis.get(roomContentType(room));
-  let parsedContentType: "none" | "image" = "none";
-
-  if (contentType !== null && contentType === "image") {
-    parsedContentType = "image";
-  }
+  const contentType = (await roomContentObject.type.get(room)) ?? "none";
 
   let content: SerializedContent = { type: "none" };
 
-  if (parsedContentType === "image") {
-    const filename = await redis.get(roomContentFilename(room));
+  if (contentType === "image") {
+    const filename = await roomContentObject.filename.get(room);
 
     content = {
       type: "image",

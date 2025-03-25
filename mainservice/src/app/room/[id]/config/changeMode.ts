@@ -1,16 +1,14 @@
 "use server";
 
 import { type Modes } from "@/db/_serialization";
-import redis from "@/db/redis";
-import { roomMode, roomPubSub, roomRoot } from "@/db/redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import roomModeObject from "@/db/objects/roomMode";
+import roomPubSubObject from "@/db/objects/roomPubSub";
+import roomRootObject from "@/db/objects/roomRoot";
 
 export default async function changeMode(room: string, mode: Modes) {
-  if (!(await redis.get(roomRoot(room)))) {
+  if (!(await roomRootObject.exists(room))) {
     throw new Error("This room does not exist");
   }
-  await redis.set(roomMode(room), mode, {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.publish(roomPubSub(room), "ping");
+  await roomModeObject.set(room, mode);
+  await roomPubSubObject.ping(room);
 }

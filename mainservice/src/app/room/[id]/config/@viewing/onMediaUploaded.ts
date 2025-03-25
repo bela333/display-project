@@ -1,11 +1,7 @@
 "use server";
 
-import redis from "@/db/redis";
-import {
-  roomContentFilename,
-  roomContentType,
-  roomPubSub,
-} from "@/db/redis-keys";
+import roomContentObject from "@/db/objects/roomContent";
+import roomPubSubObject from "@/db/objects/roomPubSub";
 import { codeValidation } from "@/lib/utils";
 
 export async function onMediaUploaded(room: string, filename: string) {
@@ -14,8 +10,8 @@ export async function onMediaUploaded(room: string, filename: string) {
   if (!roomRes.success) {
     return;
   }
-  await redis.set(roomContentType(room), "image");
-  await redis.set(roomContentFilename(room), filename);
+  await roomContentObject.type.set(room, "image");
+  await roomContentObject.filename.set(room, filename);
 
-  await redis.publish(roomPubSub(roomRes.data), "ping");
+  await roomPubSubObject.ping(roomRes.data);
 }

@@ -3,8 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { codeValidation } from "@/lib/utils";
-import redis from "@/db/redis";
-import { roomRoot } from "@/db/redis-keys";
+import roomRootObject from "@/db/objects/roomRoot";
 
 const schema = z.object({
   code: codeValidation(),
@@ -23,7 +22,7 @@ export async function joinRoom(_: unknown, data: FormData) {
 
   const code = validatedFields.data.code.toLowerCase();
 
-  if (!(await redis.exists(roomRoot(code)))) {
+  if (!(await roomRootObject.exists(code))) {
     return {
       errors: {
         code: ["Invalid code"],

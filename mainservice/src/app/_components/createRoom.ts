@@ -1,30 +1,20 @@
 "use server";
 
-import redis from "@/db/redis";
-import {
-  roomCount,
-  roomMode,
-  roomRoot,
-  roomScreenCount,
-} from "@/db/redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import roomCountObject from "@/db/objects/roomCount";
+import roomModeObject from "@/db/objects/roomMode";
+import roomRootObject from "@/db/objects/roomRoot";
+import roomScreenCountObject from "@/db/objects/roomScreenCount";
 import { keyToCode } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 export async function createRoom() {
-  const key = await redis.incr(roomCount());
+  const key = await roomCountObject.incr();
 
   const code = keyToCode(key).toLowerCase();
 
-  await redis.set(roomScreenCount(code), 0, {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.set(roomRoot(code), 1, {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.set(roomMode(code), "calibration", {
-    EX: EXPIRE_SECONDS,
-  });
+  await roomScreenCountObject.set(code, 0);
+  await roomRootObject.touch(code);
+  await roomModeObject.set(code, "calibration");
 
   redirect(`/room/${code}/config`);
 }

@@ -1,7 +1,6 @@
 "use server";
-import redis from "@/db/redis";
-import { roomRoot, screenConfig } from "@/db/redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import roomPubSubObject from "@/db/objects/roomPubSub";
+import screenConfigObject from "@/db/objects/screenConfig";
 import { type ScreenConfig } from "@/lib/screenConfig";
 
 export async function updateScreenBounds(
@@ -26,8 +25,6 @@ export async function updateScreenBounds(
     y,
   };
 
-  await redis.set(screenConfig(room, screen), JSON.stringify(config), {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.publish(roomRoot(room), "ping");
+  await screenConfigObject.set(room, screen, config);
+  await roomPubSubObject.ping(room);
 }

@@ -1,15 +1,14 @@
 "use server";
 
 import { serializeScreen } from "@/db/_serialization";
+import roomImageObject from "@/db/objects/roomImage";
+import roomPubSubObject from "@/db/objects/roomPubSub";
+import roomScreenAvailableObject from "@/db/objects/roomScreenAvailable";
+import screenHomographyObject, {
+  HomographyMatrix,
+} from "@/db/objects/screenHomography";
 import redis from "@/db/redis";
-import {
-  roomImageHeight,
-  roomImageName,
-  roomImageWidth,
-  roomPubSub,
-  roomScreenAvailable,
-  screenHomography,
-} from "@/db/redis-keys";
+import { screenHomography } from "@/db/redis-keys";
 import { EXPIRE_SECONDS } from "@/lib/consts";
 import { s3Client_internal } from "@/lib/s3";
 import { codeValidation } from "@/lib/utils";
@@ -51,12 +50,9 @@ export default async function processFile(room: string, filename: string) {
   // Get code information for room
   const screens: ApriltagScreenRequest[] = [];
 
-  const screenIds: string[] = await redis.sMembers(
-    roomScreenAvailable(roomRes.data)
-  );
-
+  const screenIds = await roomScreenAvailableObject.members(roomRes.data);
   for (const screen of screenIds) {
-    const screenConfig = await serializeScreen(roomRes.data, Number(screen));
+    const screenConfig = await serializeScreen(roomRes.data, screen);
     if (screenConfig === null) {
       continue;
     }
@@ -68,7 +64,7 @@ export default async function processFile(room: string, filename: string) {
       (screenConfig.width - bordered) / 2 + screenConfig.width + bordered / 10;
     const offsetY = (screenConfig.height - bordered) / 2 + bordered / 10;
     screens.push({
-      id: Number(screen),
+      id: screen,
       screenSize: [screenSizeX | 0, screenSizeY | 0],
       codeOffset: [offsetX | 0, offsetY | 0],
       codeSize: codeSize | 0,
@@ -82,7 +78,6 @@ export default async function processFile(room: string, filename: string) {
   const req = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: warpedname,
-    Expires: DateTime.now().plus({ days: 1 }).toJSDate(),
   });
   const upload_url = await getSignedUrl(s3Client_internal, req, {
     expiresIn: 300,
@@ -108,26 +103,18 @@ export default async function processFile(room: string, filename: string) {
   // TODO: Remove homographies that don't appear in the response
   await Promise.all(
     respJson.screens.map((screenResponse) =>
-      redis.set(
-        screenHomography(roomRes.data, screenResponse.id),
-        JSON.stringify(screenResponse.homography),
-        {
-          EX: EXPIRE_SECONDS,
-        }
+      screenHomographyObject.set(
+        roomRes.data,
+        screenResponse.id,
+        screenResponse.homography as HomographyMatrix // Array size is checked by zod
       )
     )
   );
 
-  await redis.set(roomImageName(roomRes.data), warpedname, {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.set(roomImageWidth(roomRes.data), respJson.width, {
-    EX: EXPIRE_SECONDS,
-  });
-  await redis.set(roomImageHeight(roomRes.data), respJson.height, {
-    EX: EXPIRE_SECONDS,
-  });
+  await roomImageObject.name.set(roomRes.data, warpedname);
+  await roomImageObject.width.set(roomRes.data, respJson.width);
+  await roomImageObject.height.set(roomRes.data, respJson.height);
 
-  await redis.publish(roomPubSub(roomRes.data), "ping");
+  await roomPubSubObject.ping(roomRes.data);
   return warpedname;
 }

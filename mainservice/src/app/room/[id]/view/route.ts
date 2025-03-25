@@ -1,5 +1,4 @@
-import redis from "@/db/redis";
-import { roomScreenCount } from "@/db/redis-keys";
+import roomScreenCountObject from "@/db/objects/roomScreenCount";
 import { redirect } from "next/navigation";
 
 export async function GET(
@@ -7,6 +6,6 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const room = (await params).id;
-  const screen = await redis.incr(roomScreenCount(room));
+  const screen = await roomScreenCountObject.incr(room);
   redirect(`view/${screen}`);
 }

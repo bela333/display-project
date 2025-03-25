@@ -5,9 +5,8 @@
 TODO:
 
 - [x] Make every screen have a different color in calibration mode
-- [x] Expire minio files
-- [ ] Create redis dedicated file
-  - [ ] Put database access functions here
+- [x] Create redis dedicated file
+  - [x] Put database access functions here
 - [ ] Actually remove screen on disconnect
 - [ ] Close subscription
 - [ ] Remove all homographies on file processing

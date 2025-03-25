@@ -41,7 +41,6 @@ export async function handleApriltagUpload(
     Bucket: process.env.S3_BUCKET,
     Key: uploadedFilename,
     ContentLength: filesize,
-    Expires: DateTime.now().plus({ days: 1 }).toJSDate(),
   });
   const url = await getSignedUrl(s3Client, req, { expiresIn: 300 });
   return { url, filename: uploadedFilename, ok: true as const };

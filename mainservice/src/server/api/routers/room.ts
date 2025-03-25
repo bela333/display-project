@@ -6,8 +6,9 @@ import { TRPCError } from "@trpc/server";
 import { EventEmitter } from "stream";
 import { on } from "events";
 import redis from "@/db/redis";
-import { roomPubSub, roomRoot } from "@/db/redis-keys";
+import { roomPubSub } from "@/db/redis-keys";
 import { serializeRoom } from "@/db/_serialization";
+import roomRootObject from "@/db/objects/roomRoot";
 
 export const roomRouter = createTRPCRouter({
   roomEvents: publicProcedure
@@ -17,7 +18,7 @@ export const roomRouter = createTRPCRouter({
       })
     )
     .subscription(async function* (opts) {
-      if (!(await redis.get(roomRoot(opts.input.room)))) {
+      if (!(await roomRootObject.exists(opts.input.room))) {
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
           message: "This room does not exist",
