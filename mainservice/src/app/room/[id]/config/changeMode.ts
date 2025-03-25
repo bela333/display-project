@@ -1,7 +1,8 @@
 "use server";
-import { type Modes } from "@/app/db/_serialization";
-import redis from "@/app/db/redis";
-import { roomMode, roomPubSub, roomRoot } from "@/app/db/redis-keys";
+
+import { type Modes } from "@/db/_serialization";
+import redis from "@/db/redis";
+import { roomMode, roomPubSub, roomRoot } from "@/db/redis-keys";
 import { EXPIRE_SECONDS } from "@/lib/consts";
 
 export default async function changeMode(room: string, mode: Modes) {

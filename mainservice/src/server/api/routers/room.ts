@@ -2,12 +2,12 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { codeValidation } from "@/lib/utils";
-import redis from "@/app/db/redis";
 import { TRPCError } from "@trpc/server";
-import { roomPubSub, roomRoot } from "@/app/db/redis-keys";
 import { EventEmitter } from "stream";
 import { on } from "events";
-import { serializeRoom } from "@/app/db/_serialization";
+import redis from "@/db/redis";
+import { roomPubSub, roomRoot } from "@/db/redis-keys";
+import { serializeRoom } from "@/db/_serialization";
 
 export const roomRouter = createTRPCRouter({
   roomEvents: publicProcedure

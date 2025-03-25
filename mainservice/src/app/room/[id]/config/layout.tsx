@@ -11,8 +11,8 @@ import roomContext from "../_contexts/roomContext";
 import { use, useCallback, useState } from "react";
 import changeMode from "./changeMode";
 import { useParams } from "next/navigation";
-import { type Modes } from "@/app/db/_serialization";
 import Link from "next/link";
+import { type Modes } from "@/db/_serialization";
 
 export default function ConfigLayout({
   calibration,

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, use } from "react";
+import { type ReactNode, use } from "react";
 import roomContext from "../../_contexts/roomContext";
 import { screenContext } from "./_contexts/screenContext";
 

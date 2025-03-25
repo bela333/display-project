@@ -1,11 +1,11 @@
 "use server";
 
-import redis from "@/app/db/redis";
+import redis from "@/db/redis";
 import {
   roomContentFilename,
   roomContentType,
   roomPubSub,
-} from "@/app/db/redis-keys";
+} from "@/db/redis-keys";
 import { codeValidation } from "@/lib/utils";
 
 export async function onMediaUploaded(room: string, filename: string) {

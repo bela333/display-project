@@ -1,7 +1,7 @@
 "use server";
 
-import { serializeScreen } from "@/app/db/_serialization";
-import redis from "@/app/db/redis";
+import { serializeScreen } from "@/db/_serialization";
+import redis from "@/db/redis";
 import {
   roomImageHeight,
   roomImageName,
@@ -9,7 +9,7 @@ import {
   roomPubSub,
   roomScreenAvailable,
   screenHomography,
-} from "@/app/db/redis-keys";
+} from "@/db/redis-keys";
 import { EXPIRE_SECONDS } from "@/lib/consts";
 import { s3Client_internal } from "@/lib/s3";
 import { codeValidation } from "@/lib/utils";

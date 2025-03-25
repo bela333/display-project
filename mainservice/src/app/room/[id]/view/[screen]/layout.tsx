@@ -1,8 +1,9 @@
 import { type ReactNode } from "react";
 import ScreenContextProvider from "./_components/ScreenContextProvider";
-import redis from "@/app/db/redis";
-import { roomPubSub } from "@/app/db/redis-keys";
+
 import { Switcher } from "./Switcher";
+import redis from "@/db/redis";
+import { roomPubSub } from "@/db/redis-keys";
 
 export default async function ViewLayout({
   params,

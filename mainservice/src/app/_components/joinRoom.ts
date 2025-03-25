@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import redis from "@/app/db/redis";
 import { codeValidation } from "@/lib/utils";
-import { roomRoot } from "@/app/db/redis-keys";
+import redis from "@/db/redis";
+import { roomRoot } from "@/db/redis-keys";
 
 const schema = z.object({
   code: codeValidation(),

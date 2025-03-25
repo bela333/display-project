@@ -1,7 +1,7 @@
 "use server";
+import redis from "@/db/redis";
+import { roomPubSub, roomScreenAvailable } from "@/db/redis-keys";
 import { EXPIRE_SECONDS } from "@/lib/consts";
-import redis from "@/app/db/redis";
-import { roomPubSub, roomScreenAvailable } from "@/app/db/redis-keys";
 
 export async function registerScreen(roomID: string, screenID: number) {
   await redis.sAdd(roomScreenAvailable(roomID), String(screenID));

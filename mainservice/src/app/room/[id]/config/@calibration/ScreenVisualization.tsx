@@ -1,5 +1,6 @@
 "use client";
-import { type SerializedScreen } from "@/app/db/_serialization";
+
+import { type SerializedScreen } from "@/db/_serialization";
 import { selectColor } from "@/lib/utils";
 import { Box } from "@mantine/core";
 import * as math from "mathjs";

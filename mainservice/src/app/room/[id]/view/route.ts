@@ -1,5 +1,5 @@
-import redis from "@/app/db/redis";
-import { roomScreenCount } from "@/app/db/redis-keys";
+import redis from "@/db/redis";
+import { roomScreenCount } from "@/db/redis-keys";
 import { redirect } from "next/navigation";
 
 export async function GET(
