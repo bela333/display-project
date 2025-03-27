@@ -1,11 +1,12 @@
 "use client";
-import { Box, Image } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { use, useCallback, useState } from "react";
 
 import * as math from "mathjs";
 import { useElementSize } from "../../../../../useElementSize";
 import roomContext from "../../../_contexts/roomContext";
 import { screenContext } from "../_contexts/screenContext";
+import { ScreenContent } from "../../../ScreenContent";
 
 export default function ViewingPage() {
   const room = use(roomContext);
@@ -81,24 +82,7 @@ export default function ViewingPage() {
           transformOrigin: "top left",
         }}
       >
-        {room.lastEvent.serializedNowPlayingContent.type === "none" ? (
-          <Image
-            w="100%"
-            h="100%"
-            fit="fill"
-            alt="AprilTag"
-            src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
-          />
-        ) : null}
-        {room.lastEvent.serializedNowPlayingContent.type === "image" ? (
-          <Image
-            w="100%"
-            h="100%"
-            fit="contain"
-            alt="Image"
-            src={`${room.lastEvent.serializedNowPlayingContent.url}`}
-          />
-        ) : null}
+        <ScreenContent />
       </Box>
     </Box>
   );

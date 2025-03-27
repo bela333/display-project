@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import processFile from "./processFile";
 
-import PreviewImage from "./PreviewImage";
+import CalibrationImage from "./CalibrationImage";
 import RoomUploadButton from "../../../../RoomUploadButton";
 import { handleApriltagUpload } from "./handleApriltagUpload";
 import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
@@ -28,7 +28,7 @@ export default function ConfigCalibration() {
           supportedMimeTypes={CALIBRATION_SUPPORTED_MIME}
           title="Upload calibration image"
         />
-        <PreviewImage />
+        <CalibrationImage />
       </Stack>
     </Container>
   );

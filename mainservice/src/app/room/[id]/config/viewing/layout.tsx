@@ -30,13 +30,15 @@ export default function ViewingLayout({
 
   return (
     <Flex w="100%" px="4rem">
-      <SegmentedControl
-        value={segment}
-        onChange={(value) => router.replace(value)}
-        w="6rem"
-        orientation="vertical"
-        data={routes}
-      />
+      <Box w="6rem">
+        <SegmentedControl
+          value={segment}
+          onChange={(value) => router.replace(value)}
+          orientation="vertical"
+          data={routes}
+          fullWidth
+        />
+      </Box>
       <Box w="50%">{children}</Box>
       <Box w="50%">
         <PreviewWindow />

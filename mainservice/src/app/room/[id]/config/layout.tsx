@@ -68,7 +68,11 @@ export default function ConfigLayout({
           onChange={onChange}
           data={[
             { value: "calibration", label: "Calibrate" },
-            { value: "viewing", label: "Broadcast" },
+            {
+              value: "viewing",
+              label: "Broadcast",
+              disabled: room.lastEvent.image === undefined,
+            },
           ]}
         />
 

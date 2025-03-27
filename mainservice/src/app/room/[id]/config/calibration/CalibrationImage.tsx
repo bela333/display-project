@@ -5,7 +5,7 @@ import style from "@/app/page.module.css";
 import ScreenVisualization from "./ScreenVisualization";
 import { useElementSize } from "@/app/useElementSize";
 
-export default function PreviewImage() {
+export default function CalibrationImage() {
   const room = use(roomContext);
   if (room === undefined) {
     throw new Error("Room loading");
