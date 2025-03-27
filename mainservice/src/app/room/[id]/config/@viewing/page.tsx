@@ -1,6 +1,6 @@
 "use client";
 import { Container, Stack } from "@mantine/core";
-import RoomUploadButton from "../../_components/RoomUploadButton";
+import RoomUploadButton from "../../../../RoomUploadButton";
 import { useCallback } from "react";
 import {
   handleMediaUpload,

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { screenContext } from "../_contexts/screenContext";
+import { screenContext } from "./_contexts/screenContext";
 import {
   deregisterScreen,
   registerScreen,
-} from "../_actions/screenRegistration";
+} from "./_actions/screenRegistration";
 import { PING_INTERVAL } from "@/lib/consts";
-import { sendPing } from "../_actions/sendPing";
+import { sendPing } from "./_actions/sendPing";
 
 const useRoomRegistry = (roomID: string, screenID: number) =>
   useEffect(() => {

@@ -1,9 +1,9 @@
 "use client";
 import { Button, Divider, Stack, TextInput } from "@mantine/core";
 import { useActionState } from "react";
-import { joinRoom } from "./joinRoom";
-import { createRoom } from "./createRoom";
 import { CODE_LENGTH } from "@/lib/consts";
+import { joinRoom } from "./_actions/joinRoom";
+import { createRoom } from "./_actions/createRoom";
 
 export function Onboard() {
   const [joinRoomState, joinRoomAction, joinPending] = useActionState(

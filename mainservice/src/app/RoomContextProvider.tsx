@@ -2,7 +2,7 @@
 
 import { api } from "@/trpc/react";
 import { type ReactNode } from "react";
-import roomContext from "../_contexts/roomContext";
+import roomContext from "./room/[id]/_contexts/roomContext";
 
 export default function RoomContextProvider({
   children,

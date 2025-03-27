@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import RoomContextProvider from "./_components/RoomContextProvider";
+import RoomContextProvider from "../../RoomContextProvider";
 
 export default async function RoomLayout({
   children,

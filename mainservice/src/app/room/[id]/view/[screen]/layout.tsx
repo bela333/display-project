@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import ScreenContextProvider from "./_components/ScreenContextProvider";
+import ScreenContextProvider from "./ScreenContextProvider";
 
 import { Switcher } from "./Switcher";
 import roomPubSubObject from "@/db/objects/roomPubSub";

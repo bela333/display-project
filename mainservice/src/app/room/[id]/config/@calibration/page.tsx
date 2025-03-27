@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import processFile from "./processFile";
 
 import PreviewImage from "./PreviewImage";
-import RoomUploadButton from "../../_components/RoomUploadButton";
+import RoomUploadButton from "../../../../RoomUploadButton";
 import { handleApriltagUpload } from "./handleApriltagUpload";
 import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
 

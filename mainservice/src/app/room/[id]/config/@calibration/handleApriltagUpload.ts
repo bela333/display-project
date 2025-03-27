@@ -10,7 +10,7 @@ import { randomUUID } from "crypto";
 import {
   type RoomUploadHandlerNeg,
   type RoomUploadHandlerPos,
-} from "../../_components/RoomUploadButton";
+} from "../../../../RoomUploadButton";
 import { DateTime } from "luxon";
 
 export type RequestApriltagUploadPos = RoomUploadHandlerPos & {

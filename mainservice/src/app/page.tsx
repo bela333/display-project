@@ -1,7 +1,8 @@
 import { HydrateClient } from "@/trpc/server";
 import { Center, Paper } from "@mantine/core";
-import { Onboard } from "@/app/_components/Onboard";
+
 import style from "./page.module.css";
+import { Onboard } from "./Onboard";
 
 export default async function Home() {
   return (
