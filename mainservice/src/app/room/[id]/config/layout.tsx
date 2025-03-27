@@ -8,18 +8,40 @@ import {
   Text,
 } from "@mantine/core";
 import roomContext from "../_contexts/roomContext";
-import { use, useCallback, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import changeMode from "./changeMode";
-import { useParams } from "next/navigation";
+import {
+  useParams,
+  useRouter,
+  useSelectedLayoutSegment,
+} from "next/navigation";
 import Link from "next/link";
 import { type Modes } from "@/db/serialization";
 
 export default function ConfigLayout({
-  calibration,
-  viewing,
-}: Readonly<{ calibration: React.ReactNode; viewing: React.ReactNode }>) {
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const { id }: { id: string } = useParams();
   const room = use(roomContext);
+  const segment = useSelectedLayoutSegment();
+  const router = useRouter();
+  useEffect(() => {
+    if (!room?.lastEvent.mode) {
+      return;
+    }
+    if (segment != room.lastEvent.mode) {
+      switch (room.lastEvent.mode) {
+        case "calibration":
+          router.replace(`/room/${id}/config/calibration`);
+          break;
+        case "viewing":
+          router.replace(`/room/${id}/config/viewing/photo`);
+          break;
+      }
+    }
+  }, [segment, room?.lastEvent.mode, router, id]);
 
   const [loading, setLoading] = useState(false);
 
@@ -42,24 +64,19 @@ export default function ConfigLayout({
       <Flex justify="space-between" direction="row" m={10} mt={0}>
         <Text>Room ID: {room.roomID}</Text>
         <SegmentedControl
-          value={room.lastEvent.mode}
+          value={segment ?? undefined}
           onChange={onChange}
           data={[
             { value: "calibration", label: "Calibrate" },
             { value: "viewing", label: "Broadcast" },
           ]}
         />
+
         <Button component={Link} href={`/room/${id}/view`}>
           View
         </Button>
       </Flex>
-      <Box>
-        {room.lastEvent.mode === "calibration"
-          ? calibration
-          : room.lastEvent.mode === "viewing"
-          ? viewing
-          : null}
-      </Box>
+      <Box>{children}</Box>
     </Flex>
   );
 }
