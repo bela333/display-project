@@ -21,7 +21,7 @@ export type SerializedImage = {
   height: number;
 };
 
-export type SerializedContent =
+export type SerializedNowPlayingContent =
   | { type: "none" }
   | { type: "image"; filename: string; url: string };
 
@@ -30,10 +30,10 @@ export type Modes = "calibration" | "viewing";
 export type SerializedRoom = {
   screenCount: number;
   // TODO: This is a horrible name wtf
-  screenLocals: SerializedScreen[];
+  serializedScreens: SerializedScreen[];
   mode: Modes;
   image?: SerializedImage;
-  content: SerializedContent;
+  serializedNowPlayingContent: SerializedNowPlayingContent;
 };
 
 export const serializeScreen = async (
@@ -57,12 +57,31 @@ export const serializeScreen = async (
   return ret;
 };
 
-export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
-  const screenCount = await roomScreenCountObject.get(room);
+export async function serializeNowPlayingContent(
+  room: string
+): Promise<SerializedNowPlayingContent> {
+  const contentType = (await roomContentObject.type.get(room)) ?? "none";
+  switch (contentType) {
+    case "none":
+      return { type: "none" };
+    case "image":
+      const filename = await roomContentObject.filename.get(room);
+      const url =
+        filename !== null
+          ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
+          : "";
 
+      return { type: "image", filename: filename ?? "", url };
+  }
+}
+
+export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
+  // Get information about screens
+
+  const screenCount = await roomScreenCountObject.get(room);
   const screens = await roomScreenAvailableObject.members(room);
 
-  const screenLocals = (
+  const serializedScreens = (
     await Promise.all(
       screens.map<Promise<SerializedScreen | null>>(async (screen) =>
         serializeScreen(room, screen)
@@ -70,11 +89,15 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
     )
   ).filter((a) => a !== null);
 
+  // Get current mode
+
   const mode = await roomModeObject.get(room);
 
   if (mode !== "viewing" && mode !== "calibration") {
     throw new Error(`Invalid mode: ${mode}`);
   }
+
+  // Get information about calibration image
 
   const filename = await roomImageObject.name.get(room);
   const width = await roomImageObject.width.get(room);
@@ -90,28 +113,14 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
         }
       : undefined;
 
-  const contentType = (await roomContentObject.type.get(room)) ?? "none";
-
-  let content: SerializedContent = { type: "none" };
-
-  if (contentType === "image") {
-    const filename = await roomContentObject.filename.get(room);
-
-    content = {
-      type: "image",
-      filename: filename ?? "",
-      url:
-        filename !== null
-          ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
-          : "",
-    };
-  }
+  // Get information about the Now Playing content
+  const serializedNowPlayingContent = await serializeNowPlayingContent(room);
 
   return {
     screenCount: Number(screenCount),
-    screenLocals: screenLocals,
+    serializedScreens,
     mode,
     image,
-    content,
+    serializedNowPlayingContent,
   };
 };

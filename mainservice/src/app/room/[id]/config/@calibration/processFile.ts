@@ -1,6 +1,6 @@
 "use server";
 
-import { serializeScreen } from "@/db/_serialization";
+import { serializeScreen } from "@/db/serialization";
 import roomImageObject from "@/db/objects/roomImage";
 import roomPubSubObject from "@/db/objects/roomPubSub";
 import roomScreenAvailableObject from "@/db/objects/roomScreenAvailable";

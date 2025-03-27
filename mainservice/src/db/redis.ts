@@ -1,7 +1,7 @@
 import "server-only";
 import "redis";
 import { createClient } from "redis";
-import { setupScreenExpiry } from "./_setupScreenExpiry";
+import { setupScreenExpiry } from "./setupScreenExpiry";
 
 const redis = createClient({
   url: process.env.REDIS_URL,

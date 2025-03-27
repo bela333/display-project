@@ -1,5 +1,5 @@
 import { EXPIRE_SECONDS } from "@/lib/consts";
-import { type Modes } from "../_serialization";
+import { type Modes } from "../serialization";
 import redis from "../redis";
 import { roomMode } from "../redis-keys";
 

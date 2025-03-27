@@ -22,7 +22,7 @@ export default function ViewingPage() {
   );
   useElementSize(document.body, elementSizeCallback);
 
-  const screenLocal = room.lastEvent.screenLocals.find(
+  const screenLocal = room.lastEvent.serializedScreens.find(
     (local) => local.id === String(screen.screenID)
   );
 
@@ -81,7 +81,7 @@ export default function ViewingPage() {
           transformOrigin: "top left",
         }}
       >
-        {room.lastEvent.content.type === "none" ? (
+        {room.lastEvent.serializedNowPlayingContent.type === "none" ? (
           <Image
             w="100%"
             h="100%"
@@ -90,13 +90,13 @@ export default function ViewingPage() {
             src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
           />
         ) : null}
-        {room.lastEvent.content.type === "image" ? (
+        {room.lastEvent.serializedNowPlayingContent.type === "image" ? (
           <Image
             w="100%"
             h="100%"
             fit="contain"
             alt="Image"
-            src={`${room.lastEvent.content.url}`}
+            src={`${room.lastEvent.serializedNowPlayingContent.url}`}
           />
         ) : null}
       </Box>

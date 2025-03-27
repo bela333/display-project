@@ -12,7 +12,7 @@ import { use, useCallback, useState } from "react";
 import changeMode from "./changeMode";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { type Modes } from "@/db/_serialization";
+import { type Modes } from "@/db/serialization";
 
 export default function ConfigLayout({
   calibration,

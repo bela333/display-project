@@ -1,6 +1,6 @@
 "use server";
 
-import { type Modes } from "@/db/_serialization";
+import { type Modes } from "@/db/serialization";
 import roomModeObject from "@/db/objects/roomMode";
 import roomPubSubObject from "@/db/objects/roomPubSub";
 import roomRootObject from "@/db/objects/roomRoot";

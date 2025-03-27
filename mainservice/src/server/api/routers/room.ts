@@ -7,7 +7,7 @@ import { EventEmitter } from "stream";
 import { on } from "events";
 import redis from "@/db/redis";
 import { roomPubSub } from "@/db/redis-keys";
-import { serializeRoom } from "@/db/_serialization";
+import { serializeRoom } from "@/db/serialization";
 import roomRootObject from "@/db/objects/roomRoot";
 
 export const roomRouter = createTRPCRouter({

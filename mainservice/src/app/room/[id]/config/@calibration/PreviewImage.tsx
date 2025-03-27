@@ -55,7 +55,7 @@ export default function PreviewImage() {
               }}
               ref={setImage}
             >
-              {room.lastEvent.screenLocals.map((screenLocal, i) => (
+              {room.lastEvent.serializedScreens.map((screenLocal, i) => (
                 <ScreenVisualization
                   key={screenLocal.id}
                   screen={screenLocal}
