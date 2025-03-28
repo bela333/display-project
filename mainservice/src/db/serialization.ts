@@ -6,6 +6,7 @@ import roomImageObject from "./objects/roomImage";
 import roomContentObject from "./objects/roomContent";
 import screenConfigObject from "./objects/screenConfig";
 import screenHomographyObject from "./objects/screenHomography";
+import roomPhotosObject from "./objects/roomPhotos";
 
 type MatrixRow = [number, number, number];
 
@@ -21,19 +22,32 @@ export type SerializedImage = {
   height: number;
 };
 
+export type SerializedPhotoContent = {
+  type: "photo";
+  url: string;
+};
+
 export type SerializedNowPlayingContent =
   | { type: "none" }
-  | { type: "image"; filename: string; url: string };
+  | SerializedPhotoContent;
+
+export type RoomContentType = SerializedNowPlayingContent["type"];
+
+export type SerializedUploadedPhoto = {
+  filename: string;
+  url: string;
+  id: string;
+};
 
 export type Modes = "calibration" | "viewing";
 
 export type SerializedRoom = {
   screenCount: number;
-  // TODO: This is a horrible name wtf
   serializedScreens: SerializedScreen[];
   mode: Modes;
   image?: SerializedImage;
-  serializedNowPlayingContent: SerializedNowPlayingContent;
+  nowPlayingContent: SerializedNowPlayingContent;
+  uploaded: { photos: SerializedUploadedPhoto[] };
 };
 
 export const serializeScreen = async (
@@ -57,6 +71,18 @@ export const serializeScreen = async (
   return ret;
 };
 
+async function serializePhotoContent(
+  room: string
+): Promise<SerializedPhotoContent> {
+  const filename = await roomContentObject.filename.get(room);
+  const url =
+    filename !== null
+      ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
+      : "";
+
+  return { type: "photo", url };
+}
+
 export async function serializeNowPlayingContent(
   room: string
 ): Promise<SerializedNowPlayingContent> {
@@ -64,17 +90,27 @@ export async function serializeNowPlayingContent(
   switch (contentType) {
     case "none":
       return { type: "none" };
-    case "image":
-      const filename = await roomContentObject.filename.get(room);
-      const url =
-        filename !== null
-          ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
-          : "";
-
-      return { type: "image", filename: filename ?? "", url };
+    case "photo":
+      return serializePhotoContent(room);
   }
 }
 
+export async function serializeUploadedPhotos(
+  room: string
+): Promise<SerializedUploadedPhoto[]> {
+  const ids = await roomPhotosObject.photosSet.get(room);
+  return Promise.all(
+    ids.map<Promise<SerializedUploadedPhoto>>(async (id) => {
+      const path = (await roomPhotosObject.photoPath.get(room, id)) ?? "";
+      const filename = (await roomPhotosObject.photoName.get(room, id)) ?? "";
+      return {
+        filename,
+        url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${path}`,
+        id,
+      };
+    })
+  );
+}
 export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
   // Get information about screens
 
@@ -116,11 +152,14 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
   // Get information about the Now Playing content
   const serializedNowPlayingContent = await serializeNowPlayingContent(room);
 
+  const serializedUploadedPhotos = await serializeUploadedPhotos(room);
+
   return {
     screenCount: Number(screenCount),
     serializedScreens,
     mode,
     image,
-    serializedNowPlayingContent,
+    nowPlayingContent: serializedNowPlayingContent,
+    uploaded: { photos: serializedUploadedPhotos },
   };
 };

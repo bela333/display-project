@@ -36,18 +36,6 @@ export function roomImageHeight(room: string) {
   return `${roomImageRoot(room)}:height`;
 }
 
-export function roomContentRoot(room: string) {
-  return `${roomRoot(room)}:content`;
-}
-
-export function roomContentType(room: string) {
-  return `${roomContentRoot(room)}:type`;
-}
-
-export function roomContentFilename(room: string) {
-  return `${roomContentRoot(room)}:url`;
-}
-
 export function screenRoot(room: string, screen: number) {
   return `${roomRoot(room)}:screen:${screen}`;
 }
@@ -62,4 +50,32 @@ export function screenPing(room: string, screen: number) {
 
 export function screenHomography(room: string, screen: number) {
   return `${screenRoot(room, screen)}:homography`;
+}
+
+export function roomContentRoot(room: string) {
+  return `${roomRoot(room)}:content`;
+}
+
+export function roomContentType(room: string) {
+  return `${roomContentRoot(room)}:type`;
+}
+
+export function roomContentFilename(room: string) {
+  return `${roomContentRoot(room)}:url`;
+}
+
+export function roomPhotosSet(room: string) {
+  return `${roomRoot(room)}:photos`;
+}
+
+export function roomPhotoRoot(room: string, photo: string) {
+  return `${roomRoot(room)}:photos:${photo}`;
+}
+
+export function roomPhotoName(room: string, photo: string) {
+  return `${roomPhotoRoot(room, photo)}:name`;
+}
+
+export function roomPhotoPath(room: string, photo: string) {
+  return `${roomPhotoRoot(room, photo)}:path`;
 }

@@ -5,16 +5,12 @@ import roomImageObject from "@/db/objects/roomImage";
 import roomPubSubObject from "@/db/objects/roomPubSub";
 import roomScreenAvailableObject from "@/db/objects/roomScreenAvailable";
 import screenHomographyObject, {
-  HomographyMatrix,
+  type HomographyMatrix,
 } from "@/db/objects/screenHomography";
-import redis from "@/db/redis";
-import { screenHomography } from "@/db/redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
 import { s3Client_internal } from "@/lib/s3";
 import { codeValidation } from "@/lib/utils";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { DateTime } from "luxon";
 import { z } from "zod";
 
 type ApriltagScreenRequest = {

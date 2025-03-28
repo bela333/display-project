@@ -1,4 +1,4 @@
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 import { type Modes } from "../serialization";
 import redis from "../redis";
 import { roomMode } from "../redis-keys";
@@ -6,7 +6,7 @@ import { roomMode } from "../redis-keys";
 const roomModeObject = {
   async set(room: string, mode: Modes) {
     await redis.set(roomMode(room), mode, {
-      EX: EXPIRE_SECONDS,
+      EX: ROOM_LIFETIME,
     });
   },
   async get(room: string): Promise<Modes | null> {

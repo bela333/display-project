@@ -1,7 +1,7 @@
 import { z } from "zod";
 import redis from "../redis";
 import { screenHomography } from "../redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 
 export type HomographyMatrix = [
   [number, number, number],
@@ -26,7 +26,7 @@ const screenHomographyObject = {
   },
   async set(room: string, screen: number, matrix: HomographyMatrix) {
     await redis.set(screenHomography(room, screen), JSON.stringify(matrix), {
-      EX: EXPIRE_SECONDS,
+      EX: ROOM_LIFETIME,
     });
   },
 };

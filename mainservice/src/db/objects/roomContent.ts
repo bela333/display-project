@@ -1,15 +1,16 @@
 import redis from "../redis";
 import { roomContentFilename, roomContentType } from "../redis-keys";
+import { type RoomContentType } from "../serialization";
 
 const roomContentObject = {
   type: {
-    async set(room: string, type: "none" | "image") {
+    async set(room: string, type: RoomContentType) {
       await redis.set(roomContentType(room), type);
     },
-    async get(room: string): Promise<"none" | "image" | null> {
+    async get(room: string): Promise<RoomContentType | null> {
       return (await redis.get(roomContentType(room))) as
         | "none"
-        | "image"
+        | "photo"
         | null;
     },
   },

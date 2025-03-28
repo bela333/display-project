@@ -1,4 +1,4 @@
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 import redis from "../redis";
 import { roomScreenCount } from "../redis-keys";
 
@@ -15,7 +15,7 @@ const roomScreenCountObject = {
   },
   async set(room: string, value: number) {
     return redis.set(roomScreenCount(room), value, {
-      EX: EXPIRE_SECONDS,
+      EX: ROOM_LIFETIME,
     });
   },
 };

@@ -11,7 +11,7 @@ export function ScreenContent() {
 
   return (
     <>
-      {room.lastEvent.serializedNowPlayingContent.type === "none" ? (
+      {room.lastEvent.nowPlayingContent.type === "none" ? (
         <Image
           w="100%"
           h="100%"
@@ -20,13 +20,13 @@ export function ScreenContent() {
           src="https://upload.wikimedia.org/wikipedia/commons/c/c4/PM5544_with_non-PAL_signals.png"
         />
       ) : null}
-      {room.lastEvent.serializedNowPlayingContent.type === "image" ? (
+      {room.lastEvent.nowPlayingContent.type === "photo" ? (
         <Image
           w="100%"
           h="100%"
           fit="contain"
-          alt="Image"
-          src={`${room.lastEvent.serializedNowPlayingContent.url}`}
+          alt="photo"
+          src={`${room.lastEvent.nowPlayingContent.url}`}
         />
       ) : null}
     </>

@@ -1,4 +1,4 @@
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 import redis from "../redis";
 import { roomScreenAvailable } from "../redis-keys";
 
@@ -8,7 +8,7 @@ const roomScreenAvailableObject = {
   },
   async add(room: string, screen: number) {
     await redis.sAdd(roomScreenAvailable(room), String(screen));
-    await redis.expire(roomScreenAvailable(room), EXPIRE_SECONDS);
+    await redis.expire(roomScreenAvailable(room), ROOM_LIFETIME);
   },
   async rem(room: string, screen: number) {
     await redis.sRem(roomScreenAvailable(room), String(screen));

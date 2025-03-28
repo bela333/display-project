@@ -1,0 +1,26 @@
+.uploadedPhoto {
+  display: grid;
+  grid-template-columns: 10rem auto;
+  grid-template-rows: 2.5rem 2.5rem;
+  box-sizing: content-box;
+
+  border-bottom: 1px solid gray;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.uploadedPhoto:hover {
+  background-color: gray;
+}
+
+.uploadedPhoto:first-child {
+  border-top: 1px solid gray;
+}
+
+.thumbnail {
+  object-fit: contain;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  padding: 0.25rem;
+}

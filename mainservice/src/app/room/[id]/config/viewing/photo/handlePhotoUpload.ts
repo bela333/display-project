@@ -11,15 +11,21 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/s3";
+import roomPhotosObject from "@/db/objects/roomPhotos";
 
-export type HandleMediaUploadPos = RoomUploadHandlerPos & {
-  filename: string;
+export type handlePhotoUploadPos = RoomUploadHandlerPos & {
+  id: string;
 };
 
-export async function handleMediaUpload(
-  filename: string,
-  filesize: number
-): Promise<HandleMediaUploadPos | RoomUploadHandlerNeg> {
+export async function handlePhotoUpload({
+  filename,
+  filesize,
+  room,
+}: {
+  filename: string;
+  filesize: number;
+  room: string;
+}): Promise<handlePhotoUploadPos | RoomUploadHandlerNeg> {
   if (filesize > MAXIMUM_MEDIA_FILESIZE) {
     return {
       ok: false,
@@ -36,12 +42,18 @@ export async function handleMediaUpload(
     return { ok: false as const, message: "Invalid extension" };
   }
 
-  const uploadedFilename = `${randomUUID()}.${extension}`;
+  const id = randomUUID();
+
+  const uploadedFilename = `${id}.${extension}`;
   const req = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: uploadedFilename,
     ContentLength: filesize,
   });
   const url = await getSignedUrl(s3Client, req, { expiresIn: 300 });
-  return { url, filename: uploadedFilename, ok: true as const };
+
+  await roomPhotosObject.photoName.set(room, id, filename);
+  await roomPhotosObject.photoPath.set(room, id, uploadedFilename);
+
+  return { url, id, ok: true as const };
 }

@@ -1,4 +1,4 @@
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 import redis from "../redis";
 
 const roomRootObject = {
@@ -7,7 +7,7 @@ const roomRootObject = {
   },
   async touch(room: string) {
     await redis.set(room, 1, {
-      EX: EXPIRE_SECONDS,
+      EX: ROOM_LIFETIME,
     });
   },
 };

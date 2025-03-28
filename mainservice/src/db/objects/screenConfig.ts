@@ -1,12 +1,12 @@
 import { screenConfigZod, type ScreenConfig } from "@/lib/screenConfig";
 import redis from "../redis";
 import { screenConfig } from "../redis-keys";
-import { EXPIRE_SECONDS } from "@/lib/consts";
+import { ROOM_LIFETIME } from "@/lib/consts";
 
 const screenConfigObject = {
   async set(room: string, screen: number, config: ScreenConfig) {
     await redis.set(screenConfig(room, screen), JSON.stringify(config), {
-      EX: EXPIRE_SECONDS,
+      EX: ROOM_LIFETIME,
     });
   },
   async get(room: string, screen: number): Promise<ScreenConfig | null> {

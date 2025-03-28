@@ -11,16 +11,18 @@ import {
   type RoomUploadHandlerNeg,
   type RoomUploadHandlerPos,
 } from "../../../../RoomUploadButton";
-import { DateTime } from "luxon";
 
 export type RequestApriltagUploadPos = RoomUploadHandlerPos & {
   filename: string;
 };
 
-export async function handleApriltagUpload(
-  filename: string,
-  filesize: number
-): Promise<RequestApriltagUploadPos | RoomUploadHandlerNeg> {
+export async function handleApriltagUpload({
+  filename,
+  filesize,
+}: {
+  filename: string;
+  filesize: number;
+}): Promise<RequestApriltagUploadPos | RoomUploadHandlerNeg> {
   if (filesize > MAXIMUM_CALIBRATION_FILESIZE) {
     return { message: "File too large.", ok: false as const };
   }

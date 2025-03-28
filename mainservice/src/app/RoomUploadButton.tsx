@@ -1,5 +1,6 @@
 import { Button, FileButton } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useParams } from "next/navigation";
+import { use, useCallback, useState } from "react";
 
 export type RoomUploadHandlerPos = {
   ok: true;
@@ -12,11 +13,12 @@ export type RoomUploadHandlerNeg = {
 };
 
 export type Props<T extends RoomUploadHandlerPos> = {
-  handleRequest: (
-    filename: string,
-    filesize: number
-  ) => Promise<T | RoomUploadHandlerNeg>;
-  onUpload: (resp: T) => void;
+  handleRequest: (request: {
+    filename: string;
+    filesize: number;
+    room: string;
+  }) => Promise<T | RoomUploadHandlerNeg>;
+  onUpload: (resp: T) => Promise<void>;
   supportedMimeTypes: readonly string[];
   title?: string;
 };
@@ -28,6 +30,7 @@ export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
   title,
 }: Props<T>) {
   const [loading, setLoading] = useState(false);
+  const { id: room } = useParams<{ id: string }>();
 
   const onChange = useCallback(
     async (file: File | null) => {
@@ -36,7 +39,11 @@ export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
         if (!file) {
           return; // TODO: Handle error
         }
-        const resp = await handleRequest(file.name, file.size);
+        const resp = await handleRequest({
+          filename: file.name,
+          filesize: file.size,
+          room,
+        });
         if (!resp.ok) {
           alert(resp.message);
           return; // TODO: Handle error BETTER
@@ -44,12 +51,12 @@ export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
         // TODO: Maybe replace this with a XHR, so that we can track progress?
         const req = await fetch(resp.url, { method: "PUT", body: file });
         await req.text();
-        onUpload(resp);
+        await onUpload(resp);
       } finally {
         setLoading(false);
       }
     },
-    [onUpload, handleRequest]
+    [handleRequest, room, onUpload]
   );
 
   return (

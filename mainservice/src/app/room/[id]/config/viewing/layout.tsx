@@ -29,7 +29,7 @@ export default function ViewingLayout({
   const router = useRouter();
 
   return (
-    <Flex w="100%" px="4rem">
+    <Flex w="100%">
       <Box w="6rem">
         <SegmentedControl
           value={segment}
@@ -39,7 +39,9 @@ export default function ViewingLayout({
           fullWidth
         />
       </Box>
-      <Box w="50%">{children}</Box>
+      <Box w="50%" px="1rem">
+        {children}
+      </Box>
       <Box w="50%">
         <PreviewWindow />
       </Box>

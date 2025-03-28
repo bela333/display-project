@@ -5,8 +5,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "@/trpc/react";
 
 import {
-  AppShell,
-  AppShellMain,
+  Box,
   ColorSchemeScript,
   createTheme,
   mantineHtmlProps,
@@ -42,9 +41,9 @@ export default function RootLayout({
         <TRPCReactProvider>
           <MantineProvider theme={theme} defaultColorScheme="auto">
             <Notifications />
-            <AppShell>
-              <AppShellMain>{children}</AppShellMain>
-            </AppShell>
+            <Box w="100vw" h="100vh" style={{ overflow: "hidden" }}>
+              {children}
+            </Box>
           </MantineProvider>
         </TRPCReactProvider>
       </body>
