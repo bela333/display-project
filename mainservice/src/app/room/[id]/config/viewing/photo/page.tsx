@@ -27,7 +27,7 @@ export default function ConfigViewing() {
           handleRequest={handleMediaUpload}
           onUpload={onUpload}
           supportedMimeTypes={MEDIA_SUPPORTED_MIME}
-          title="Upload media"
+          title="Upload photo"
         />
       </Stack>
     </Container>
