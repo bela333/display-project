@@ -1,0 +1,29 @@
+services:
+  main:
+    build: mainservice
+  redis:
+    image: redis
+    command: redis-server
+    volumes:
+      - redisvolume:/data
+  apriltag:
+    build: apriltagservice
+    env_file:
+      - main.env
+  minio:
+    image: minio/minio
+    command: server --console-address ":9001" /data
+    env_file:
+      - minio.env
+    volumes:
+      - miniovolume:/data
+  proxy:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+
+volumes:
+  redisvolume:
+  miniovolume:

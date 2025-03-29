@@ -11,9 +11,6 @@ export default function CalibrationImage() {
     throw new Error("Room loading");
   }
 
-  //TODO: Figure out if loading is even feasible with the current solution
-  const [loading, setLoading] = useState(false);
-
   const innerRatio = room.lastEvent.image
     ? room.lastEvent.image.width / room.lastEvent.image.height
     : 16 / 9;
@@ -29,7 +26,7 @@ export default function CalibrationImage() {
 
   return (
     <Skeleton
-      visible={loading || !room.lastEvent.image}
+      visible={!room.lastEvent.image}
       animate={!!room.lastEvent.image}
       w="100%"
       style={{ aspectRatio: 16 / 9 }}

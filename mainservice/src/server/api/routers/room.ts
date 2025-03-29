@@ -5,10 +5,10 @@ import { codeValidation } from "@/lib/utils";
 import { TRPCError } from "@trpc/server";
 import { EventEmitter } from "stream";
 import { on } from "events";
-import redis from "@/db/redis";
 import { roomPubSub } from "@/db/redis-keys";
 import { serializeRoom } from "@/db/serialization";
 import roomRootObject from "@/db/objects/roomRoot";
+import getRedis from "@/db/redis";
 
 export const roomRouter = createTRPCRouter({
   roomEvents: publicProcedure
@@ -27,7 +27,7 @@ export const roomRouter = createTRPCRouter({
 
       yield serializeRoom(opts.input.room);
 
-      const pubsubClient = redis.duplicate();
+      const pubsubClient = (await getRedis()).duplicate();
       try {
         await pubsubClient.connect();
         const ee = new EventEmitter();

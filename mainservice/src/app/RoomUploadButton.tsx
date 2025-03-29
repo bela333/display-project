@@ -1,6 +1,6 @@
 import { Button, FileButton } from "@mantine/core";
 import { useParams } from "next/navigation";
-import { use, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 export type RoomUploadHandlerPos = {
   ok: true;

@@ -1,10 +1,12 @@
 import { PING_TIMEOUT } from "@/lib/consts";
-import redis from "../redis";
 import { screenPing } from "../redis-keys";
+import getRedis from "../redis";
 
 const screenPingObject = {
   async ping(room: string, screen: number) {
-    await redis.set(screenPing(room, screen), 1, {
+    await (
+      await getRedis()
+    ).set(screenPing(room, screen), 1, {
       EX: PING_TIMEOUT,
     });
   },

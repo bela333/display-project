@@ -1,37 +1,37 @@
 import { ROOM_LIFETIME } from "@/lib/consts";
-import redis from "../redis";
 import { roomPhotoName, roomPhotoPath, roomPhotosSet } from "../redis-keys";
+import getRedis from "../redis";
 
 const roomPhotosObject = {
   photosSet: {
     async get(room: string) {
-      return redis.sMembers(roomPhotosSet(room));
+      return (await getRedis()).sMembers(roomPhotosSet(room));
     },
     async member(room: string, photo: string) {
-      return redis.sIsMember(roomPhotosSet(room), photo);
+      return (await getRedis()).sIsMember(roomPhotosSet(room), photo);
     },
     async add(room: string, photo: string) {
-      await redis.sAdd(roomPhotosSet(room), photo);
-      await redis.expire(roomPhotosSet(room), ROOM_LIFETIME);
+      await (await getRedis()).sAdd(roomPhotosSet(room), photo);
+      await (await getRedis()).expire(roomPhotosSet(room), ROOM_LIFETIME);
     },
     async remove(room: string, photo: string) {
-      await redis.sRem(roomPhotosSet(room), photo);
+      await (await getRedis()).sRem(roomPhotosSet(room), photo);
     },
   },
   photoName: {
     async get(room: string, photo: string) {
-      return redis.get(roomPhotoName(room, photo));
+      return (await getRedis()).get(roomPhotoName(room, photo));
     },
     async set(room: string, photo: string, photoName: string) {
-      await redis.set(roomPhotoName(room, photo), photoName);
+      await (await getRedis()).set(roomPhotoName(room, photo), photoName);
     },
   },
   photoPath: {
     async get(room: string, photo: string) {
-      return redis.get(roomPhotoPath(room, photo));
+      return (await getRedis()).get(roomPhotoPath(room, photo));
     },
     async set(room: string, photo: string, photoPath: string) {
-      await redis.set(roomPhotoPath(room, photo), photoPath);
+      await (await getRedis()).set(roomPhotoPath(room, photo), photoPath);
     },
   },
 };

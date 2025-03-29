@@ -2,13 +2,20 @@ import "server-only";
 import "redis";
 import { createClient } from "redis";
 import { setupScreenExpiry } from "./setupScreenExpiry";
+import { type RedisClientType } from "@redis/client";
 
-const redis = createClient({
-  url: process.env.REDIS_URL,
-});
+let redisSingleton: Promise<RedisClientType> | undefined;
 
-await redis.connect();
+function getRedis() {
+  return (redisSingleton ??= (async () => {
+    const redis: RedisClientType = createClient({
+      url: process.env.REDIS_URL,
+    });
 
-await setupScreenExpiry(redis);
+    await redis.connect();
+    await setupScreenExpiry(redis);
+    return redis;
+  })());
+}
 
-export default redis;
+export default getRedis;

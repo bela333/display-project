@@ -5,7 +5,7 @@ import {
   SegmentedControl,
   type SegmentedControlItem,
 } from "@mantine/core";
-import React, { useState } from "react";
+import React from "react";
 import PreviewWindow from "./PreviewWindow";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 

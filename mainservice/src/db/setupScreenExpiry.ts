@@ -1,9 +1,9 @@
 import { deregisterScreen } from "@/app/room/[id]/view/[screen]/_actions/screenRegistration";
-import type globalRedis from "./redis";
+import { type RedisClientType } from "@redis/client";
 
 const screenKeyRegex = /^room:([^:]+):screen:(\d+):ping$/;
 
-export async function setupScreenExpiry(redis: typeof globalRedis) {
+export async function setupScreenExpiry(redis: RedisClientType) {
   await redis.configSet("notify-keyspace-events", "Ex");
   const listener = redis.duplicate();
   await listener.connect();

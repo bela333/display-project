@@ -1,9 +1,9 @@
-import redis from "../redis";
+import getRedis from "../redis";
 import { roomPubSub } from "../redis-keys";
 
 const roomPubSubObject = {
   async ping(room: string) {
-    await redis.publish(roomPubSub(room), "ping");
+    await (await getRedis()).publish(roomPubSub(room), "ping");
   },
 };
 

@@ -67,7 +67,7 @@ export default async function processFile(room: string, filename: string) {
     });
   }
 
-  const [name, extension] = filename.split(".");
+  const [name] = filename.split(".");
   const warpedname = `${name}.warped.jpg`;
 
   // Create PUT URL for result image upload

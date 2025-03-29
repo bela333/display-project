@@ -18,6 +18,7 @@ export default function UploadedPhoto({
   return (
     <Box className={style.uploadedPhoto} onClick={onClick}>
       {/* TODO: Generate thumbnails (maybe imagor??) */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={photo.url}
         alt={photo.filename}

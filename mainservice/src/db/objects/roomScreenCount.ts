@@ -1,20 +1,20 @@
 import { ROOM_LIFETIME } from "@/lib/consts";
-import redis from "../redis";
 import { roomScreenCount } from "../redis-keys";
+import getRedis from "../redis";
 
 const roomScreenCountObject = {
   async get(room: string) {
-    const res = await redis.get(roomScreenCount(room));
+    const res = await (await getRedis()).get(roomScreenCount(room));
     if (res === null) {
       return null;
     }
     return Number(res);
   },
   async incr(room: string) {
-    return redis.incr(roomScreenCount(room));
+    return (await getRedis()).incr(roomScreenCount(room));
   },
   async set(room: string, value: number) {
-    return redis.set(roomScreenCount(room), value, {
+    return (await getRedis()).set(roomScreenCount(room), value, {
       EX: ROOM_LIFETIME,
     });
   },

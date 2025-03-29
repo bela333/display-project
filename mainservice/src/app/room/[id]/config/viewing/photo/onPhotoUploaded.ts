@@ -1,6 +1,5 @@
 "use server";
 
-import roomContentObject from "@/db/objects/roomContent";
 import roomPhotosObject from "@/db/objects/roomPhotos";
 import roomPubSubObject from "@/db/objects/roomPubSub";
 import { codeValidation } from "@/lib/utils";
