@@ -37,7 +37,7 @@ export async function handlePhotoUpload({
 
   if (
     !extension ||
-    !MEDIA_SUPPORTED_EXTENSIONS.find((ext) => ext === extension)
+    !MEDIA_SUPPORTED_EXTENSIONS.find((ext) => ext.toLowerCase() === extension.toLowerCase())
   ) {
     return { ok: false as const, message: "Invalid extension" };
   }

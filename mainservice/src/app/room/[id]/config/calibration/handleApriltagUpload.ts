@@ -32,7 +32,7 @@ export async function handleApriltagUpload({
 
   if (
     !extension ||
-    !CALIBRATION_SUPPORTED_EXTENSIONS.find((ext) => ext === extension)
+    !CALIBRATION_SUPPORTED_EXTENSIONS.find((ext) => ext.toLowerCase() === extension.toLowerCase())
   ) {
     return { ok: false as const, message: "Invalid extension" };
   }
