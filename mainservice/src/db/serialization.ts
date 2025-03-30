@@ -27,9 +27,21 @@ export type SerializedPhotoContent = {
   url: string;
 };
 
+export type SerializedEmbeddedVideoContent = {
+  type: "video";
+  url: string;
+  status: ({ type: "paused" } | { type: "playing" }) & {
+    /** UNIX timestamp for when playback status was set to this state (milliseconds) */
+    timestamp: number;
+    /** Time of playback when playback status was set to this state (seconds) */
+    videotime: number;
+  };
+};
+
 export type SerializedNowPlayingContent =
   | { type: "none" }
-  | SerializedPhotoContent;
+  | SerializedPhotoContent
+  | SerializedEmbeddedVideoContent;
 
 export type RoomContentType = SerializedNowPlayingContent["type"];
 
@@ -74,13 +86,57 @@ export const serializeScreen = async (
 async function serializePhotoContent(
   room: string
 ): Promise<SerializedPhotoContent> {
-  const filename = await roomContentObject.filename.get(room);
+  const filename = await roomContentObject.url.get(room);
   const url =
     filename !== null
       ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
       : "";
 
   return { type: "photo", url };
+}
+
+async function serializeEmbeddedVideoContent(
+  room: string
+): Promise<SerializedEmbeddedVideoContent | { type: "none" }> {
+  const url = await roomContentObject.url.get(room);
+  const statusType = await roomContentObject.status.type.get(room);
+  const timestamp = await roomContentObject.status.timestamp.get(room);
+  const videotime = await roomContentObject.status.videotime.get(room);
+  if (
+    url === null ||
+    statusType === null ||
+    timestamp === null ||
+    videotime === null
+  ) {
+    return {
+      type: "none",
+    };
+  }
+  let status: ({ type: "paused" } | { type: "playing" }) & {
+    timestamp: number;
+    videotime: number;
+  };
+  switch (statusType) {
+    case "paused":
+      status = {
+        type: "paused",
+        timestamp,
+        videotime,
+      };
+      break;
+    case "playing":
+      status = {
+        type: "playing",
+        timestamp,
+        videotime,
+      };
+      break;
+  }
+  return {
+    type: "video",
+    url,
+    status,
+  };
 }
 
 export async function serializeNowPlayingContent(
@@ -92,6 +148,8 @@ export async function serializeNowPlayingContent(
       return { type: "none" };
     case "photo":
       return serializePhotoContent(room);
+    case "video":
+      return serializeEmbeddedVideoContent(room);
   }
 }
 

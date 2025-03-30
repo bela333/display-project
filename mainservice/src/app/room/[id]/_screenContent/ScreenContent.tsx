@@ -1,6 +1,7 @@
 import { useContext } from "react";
-import roomContext from "./_contexts/roomContext";
+import roomContext from "../_contexts/roomContext";
 import { Image } from "@mantine/core";
+import VideoContent from "./VideoContent";
 
 export function ScreenContent() {
   const room = useContext(roomContext);
@@ -27,6 +28,12 @@ export function ScreenContent() {
           fit="contain"
           alt="photo"
           src={`${room.lastEvent.nowPlayingContent.url}`}
+        />
+      ) : null}
+      {room.lastEvent.nowPlayingContent.type === "video" ? (
+        <VideoContent
+          content={room.lastEvent.nowPlayingContent}
+          key={room.lastEvent.nowPlayingContent.url}
         />
       ) : null}
     </>

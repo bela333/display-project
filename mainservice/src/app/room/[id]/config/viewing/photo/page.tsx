@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { onPhotoUploaded } from "./onPhotoUploaded";
 import PhotoList from "./PhotoList";
 
-export default function ConfigViewing() {
+export default function PhotoPage() {
   const { id: room }: { id: string } = useParams();
 
   const onUpload = useCallback(

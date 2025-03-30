@@ -6,7 +6,7 @@ import * as math from "mathjs";
 import { useElementSize } from "../../../../../useElementSize";
 import roomContext from "../../../_contexts/roomContext";
 import { screenContext } from "../_contexts/screenContext";
-import { ScreenContent } from "../../../ScreenContent";
+import { ScreenContent } from "../../../_screenContent/ScreenContent";
 
 export default function ViewingPage() {
   const room = use(roomContext);

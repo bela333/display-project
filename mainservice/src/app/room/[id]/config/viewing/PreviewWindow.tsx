@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import roomContext from "../../_contexts/roomContext";
 import { Box, Flex } from "@mantine/core";
-import { ScreenContent } from "../../ScreenContent";
+import { ScreenContent } from "../../_screenContent/ScreenContent";
 import style from "@/app/page.module.css";
+import Controls from "./_controls/Controls";
 
 export default function PreviewWindow() {
   const room = useContext(roomContext);
@@ -38,7 +39,7 @@ export default function PreviewWindow() {
           <ScreenContent />
         </Box>
       </Flex>
-      <Flex direction="row">TODO: Video controls here</Flex>
+      <Controls />
     </Flex>
   );
 }

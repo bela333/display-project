@@ -60,8 +60,24 @@ export function roomContentType(room: string) {
   return `${roomContentRoot(room)}:type`;
 }
 
-export function roomContentFilename(room: string) {
+export function roomContentUrl(room: string) {
   return `${roomContentRoot(room)}:url`;
+}
+
+export function roomContentStatusRoot(room: string) {
+  return `${roomContentRoot(room)}:status`;
+}
+
+export function roomContentStatusType(room: string) {
+  return `${roomContentStatusRoot(room)}:type`;
+}
+
+export function roomContentStatusTimestamp(room: string) {
+  return `${roomContentStatusRoot(room)}:timestamp`;
+}
+
+export function roomContentStatusVideotime(room: string) {
+  return `${roomContentStatusRoot(room)}:videotime`;
 }
 
 export function roomPhotosSet(room: string) {

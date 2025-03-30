@@ -23,6 +23,6 @@ export async function setContentToPhoto(room: string, photo: string) {
   }
 
   await roomContentObject.type.set(room, "photo");
-  await roomContentObject.filename.set(room, photoPath);
+  await roomContentObject.url.set(room, photoPath);
   await roomPubSubObject.ping(room);
 }
