@@ -30,10 +30,12 @@ export default async function VideoPage({
 }) {
   const { id } = await params;
   return (
-    <Stack component="form" action={playUrlAction}>
-      <input type="hidden" name="room" value={id} />
-      <TextInput label="Embed url" name="url" />
-      <Button type="submit">Play</Button>
-    </Stack>
+    <form action={playUrlAction}>
+      <Stack>
+        <input type="hidden" name="room" value={id} />
+        <TextInput label="Embed url" name="url" />
+        <Button type="submit">Play</Button>
+      </Stack>
+    </form>
   );
 }
