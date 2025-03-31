@@ -22,8 +22,7 @@ export default function VideoContent({ content }: Props) {
     }
     if (content.status.type === "playing") {
       // playing
-      const elapsed = Date.now() - content.status.timestamp;
-      video.seekTo(content.status.videotime + elapsed / 1000);
+      video.seekTo(content.status.videotime);
     } else {
       // paused
       video.seekTo(content.status.videotime);

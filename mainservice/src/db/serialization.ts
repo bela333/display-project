@@ -125,10 +125,11 @@ async function serializeEmbeddedVideoContent(
       };
       break;
     case "playing":
+      const elapsed = Date.now() - timestamp;
       status = {
         type: "playing",
         timestamp,
-        videotime,
+        videotime: videotime + elapsed / 1000,
       };
       break;
   }
