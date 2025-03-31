@@ -18,6 +18,11 @@ const routes: SegmentedControlItem[] = [
     label: "Videos",
     value: "video",
   },
+
+  {
+    label: "IFrame",
+    value: "iframe",
+  },
 ];
 
 export default function ViewingLayout({

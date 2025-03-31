@@ -38,10 +38,16 @@ export type SerializedEmbeddedVideoContent = {
   };
 };
 
+export type SerializedIFrameContent = {
+  type: "iframe";
+  url: string;
+};
+
 export type SerializedNowPlayingContent =
   | { type: "none" }
   | SerializedPhotoContent
-  | SerializedEmbeddedVideoContent;
+  | SerializedEmbeddedVideoContent
+  | SerializedIFrameContent;
 
 export type RoomContentType = SerializedNowPlayingContent["type"];
 
@@ -140,6 +146,16 @@ async function serializeEmbeddedVideoContent(
   };
 }
 
+async function serializeIFrameContent(
+  room: string
+): Promise<SerializedIFrameContent> {
+  const url = await roomContentObject.url.get(room);
+  return {
+    type: "iframe",
+    url: url ?? "http://google.com",
+  };
+}
+
 export async function serializeNowPlayingContent(
   room: string
 ): Promise<SerializedNowPlayingContent> {
@@ -151,6 +167,8 @@ export async function serializeNowPlayingContent(
       return serializePhotoContent(room);
     case "video":
       return serializeEmbeddedVideoContent(room);
+    case "iframe":
+      return serializeIFrameContent(room);
   }
 }
 

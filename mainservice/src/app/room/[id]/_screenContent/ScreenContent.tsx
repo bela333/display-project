@@ -36,6 +36,15 @@ export function ScreenContent() {
           key={room.lastEvent.nowPlayingContent.url}
         />
       ) : null}
+      {room.lastEvent.nowPlayingContent.type === "iframe" ? (
+        <iframe
+          src={room.lastEvent.nowPlayingContent.url}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      ) : null}
     </>
   );
 }
