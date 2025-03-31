@@ -37,6 +37,7 @@ Example policy:
 
 TODO:
 
+- [ ] Clear file input after it is used
 - [ ] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
 - [ ] Add different bucket for media
 - [ ] Add video option
