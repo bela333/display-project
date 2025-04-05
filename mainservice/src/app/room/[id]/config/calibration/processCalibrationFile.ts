@@ -99,7 +99,14 @@ export default async function processCalibrationFile(
     await resp.json()
   );
 
-  // TODO: Remove homographies that don't appear in the response
+  // Remove homographies that don't appear in the response
+  const knownScreens = await roomScreenAvailableObject.members(roomRes.data);
+  await Promise.all(
+    knownScreens.map((screenID) =>
+      screenHomographyObject.del(roomRes.data, screenID)
+    )
+  );
+
   await Promise.all(
     respJson.screens.map((screenResponse) =>
       screenHomographyObject.set(

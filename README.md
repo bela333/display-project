@@ -41,13 +41,16 @@ TODO:
 
 - [x] Clear file input after it is used
 - [x] Add different bucket for media
+- [x] Remove all homographies on file processing
 - [ ] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
-- [ ] Add video option
+- [ ] Add uploaded video option
 - [ ] Add presentation option (?)
 - [ ] Make sure size is responsive
 - [ ] Actually remove screen on disconnect
 - [ ] Close subscription
-- [ ] Remove all homographies on file processing
 - [ ] Add proper error handling when no tags appear on image
 - [ ] Make sure rooms actually exist when changing them
 - [ ] Potentially use websockets for better reliability
+- [ ] Auto synchronize YouTube videos (alternatively remove non-uploaded video option)
+- [ ] Tests
+- [ ] Resolve TODOs in source code files

@@ -52,14 +52,16 @@ export default function CalibrationImage() {
               }}
               ref={setImage}
             >
-              {room.lastEvent.serializedScreens.map((screenLocal, i) => (
-                <ScreenVisualization
-                  key={screenLocal.id}
-                  screen={screenLocal}
-                  imageBounds={imageBounds}
-                  top={-i * imageBounds[1]} /* I hate this SO much */
-                />
-              ))}
+              {room.lastEvent.serializedScreens
+                .filter((screen) => screen.homography)
+                .map((screenLocal, i) => (
+                  <ScreenVisualization
+                    key={screenLocal.id}
+                    screen={screenLocal}
+                    imageBounds={imageBounds}
+                    top={-i * imageBounds[1]} /* I hate this SO much */
+                  />
+                ))}
             </Box>
           </Box>
         </Flex>

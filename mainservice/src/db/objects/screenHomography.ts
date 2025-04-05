@@ -31,6 +31,9 @@ const screenHomographyObject = {
       EX: ROOM_LIFETIME,
     });
   },
+  async del(room: string, screen: number) {
+    await (await getRedis()).del(screenHomography(room, screen));
+  },
 };
 
 export default screenHomographyObject;
