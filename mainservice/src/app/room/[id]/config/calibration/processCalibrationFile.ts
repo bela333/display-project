@@ -33,7 +33,10 @@ const apriltagResponse = z.object({
 
 type ApriltagResponse = z.infer<typeof apriltagResponse>;
 
-export default async function processFile(room: string, filename: string) {
+export default async function processCalibrationFile(
+  room: string,
+  filename: string
+) {
   const roomRes = await codeValidation().safeParseAsync(room);
 
   if (!roomRes.success) {
@@ -72,7 +75,7 @@ export default async function processFile(room: string, filename: string) {
 
   // Create PUT URL for result image upload
   const req = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET,
+    Bucket: process.env.S3_CALIBRATION_BUCKET,
     Key: warpedname,
   });
   const upload_url = await getSignedUrl(s3Client_internal, req, {

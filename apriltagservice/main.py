@@ -8,9 +8,9 @@ import requests
 from os import environ
 
 assert environ.get("S3_ENDPOINT_INTERNAL")
-assert environ.get("S3_BUCKET")
+assert environ.get("S3_CALIBRATION_BUCKET")
 S3_ENDPOINT_INTERNAL = environ.get("S3_ENDPOINT_INTERNAL")
-S3_BUCKET = environ.get("S3_BUCKET")
+S3_CALIBRATION_BUCKET = environ.get("S3_CALIBRATION_BUCKET")
 
 app = FastAPI()
 
@@ -70,7 +70,7 @@ ResponseScreen = t.TypedDict('Response', {'id': int, 'homography': list})
 def process_image(
     req: ProcessRequest
 ):
-    file = requests.get(f"{S3_ENDPOINT_INTERNAL}/{S3_BUCKET}/{req.filename}")
+    file = requests.get(f"{S3_ENDPOINT_INTERNAL}/{S3_CALIBRATION_BUCKET}/{req.filename}")
 
     image = cv2.imdecode(
         np.asarray(bytearray(file.content), dtype="uint8"), cv2.IMREAD_COLOR_BGR

@@ -2,7 +2,7 @@
 import { Container, Stack } from "@mantine/core";
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import processFile from "./processFile";
+import processCalibrationFile from "./processCalibrationFile";
 
 import CalibrationImage from "./CalibrationImage";
 import RoomUploadButton from "../../../../RoomUploadButton";
@@ -14,7 +14,7 @@ export default function ConfigCalibration() {
 
   const onUpload = useCallback(
     async ({ filename }: { filename: string }) => {
-      await processFile(id, filename);
+      await processCalibrationFile(id, filename);
     },
     [id]
   );

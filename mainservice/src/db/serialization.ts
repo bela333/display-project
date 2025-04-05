@@ -95,7 +95,7 @@ async function serializePhotoContent(
   const filename = await roomContentObject.url.get(room);
   const url =
     filename !== null
-      ? `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`
+      ? `${process.env.S3_ENDPOINT}/${process.env.S3_MEDIA_BUCKET}/${filename}`
       : "";
 
   return { type: "photo", url };
@@ -182,7 +182,7 @@ export async function serializeUploadedPhotos(
       const filename = (await roomPhotosObject.photoName.get(room, id)) ?? "";
       return {
         filename,
-        url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${path}`,
+        url: `${process.env.S3_ENDPOINT}/${process.env.S3_MEDIA_BUCKET}/${path}`,
         id,
       };
     })
@@ -222,7 +222,7 @@ export const serializeRoom = async (room: string): Promise<SerializedRoom> => {
           filename,
           height,
           width,
-          url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${filename}`,
+          url: `${process.env.S3_ENDPOINT}/${process.env.S3_CALIBRATION_BUCKET}/${filename}`,
         }
       : undefined;
 

@@ -17,6 +17,8 @@ Production
 
 You need to create a bucket for calibrations. It needs to be readable by anyone.
 
+You need to create a bucket for media. It needs to be readable by anyone.
+
 Example policy:
 
 ```json
@@ -37,9 +39,9 @@ Example policy:
 
 TODO:
 
-- [ ] Clear file input after it is used
+- [x] Clear file input after it is used
+- [x] Add different bucket for media
 - [ ] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
-- [ ] Add different bucket for media
 - [ ] Add video option
 - [ ] Add presentation option (?)
 - [ ] Make sure size is responsive

@@ -37,7 +37,9 @@ export async function handlePhotoUpload({
 
   if (
     !extension ||
-    !MEDIA_SUPPORTED_EXTENSIONS.find((ext) => ext.toLowerCase() === extension.toLowerCase())
+    !MEDIA_SUPPORTED_EXTENSIONS.find(
+      (ext) => ext.toLowerCase() === extension.toLowerCase()
+    )
   ) {
     return { ok: false as const, message: "Invalid extension" };
   }
@@ -46,7 +48,7 @@ export async function handlePhotoUpload({
 
   const uploadedFilename = `${id}.${extension}`;
   const req = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET,
+    Bucket: process.env.S3_MEDIA_BUCKET,
     Key: uploadedFilename,
     ContentLength: filesize,
   });

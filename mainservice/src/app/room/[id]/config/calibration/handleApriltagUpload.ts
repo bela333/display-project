@@ -32,7 +32,9 @@ export async function handleApriltagUpload({
 
   if (
     !extension ||
-    !CALIBRATION_SUPPORTED_EXTENSIONS.find((ext) => ext.toLowerCase() === extension.toLowerCase())
+    !CALIBRATION_SUPPORTED_EXTENSIONS.find(
+      (ext) => ext.toLowerCase() === extension.toLowerCase()
+    )
   ) {
     return { ok: false as const, message: "Invalid extension" };
   }
@@ -40,7 +42,7 @@ export async function handleApriltagUpload({
   const uploadedFilename = `${randomUUID()}.${extension}`;
 
   const req = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET,
+    Bucket: process.env.S3_CALIBRATION_BUCKET,
     Key: uploadedFilename,
     ContentLength: filesize,
   });
