@@ -1,6 +1,11 @@
 services:
   main:
     build: mainservice
+    env_file:
+      - main.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - APRILTAG_URL=http://apriltag:8000
   redis:
     image: redis
     command: redis-server

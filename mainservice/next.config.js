@@ -11,6 +11,7 @@ const config = {
       bodySizeLimit: "100mb",
     },
   },
+  output: "standalone"
 };
 
 export default config;

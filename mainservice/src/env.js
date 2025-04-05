@@ -7,13 +7,13 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    REDIS_URL: z.string().url(),
-    APRILTAG_URL: z.string().url(),
+    REDIS_URL: z.string(),
+    APRILTAG_URL: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    S3_ENDPOINT: z.string().url().optional(),
-    S3_ENDPOINT_INTERNAL: z.string().url().optional(),
+    S3_ENDPOINT: z.string().optional(),
+    S3_ENDPOINT_INTERNAL: z.string().optional(),
     S3_REGION: z.string(),
     S3_CALIBRATION_BUCKET: z.string(),
     S3_MEDIA_BUCKET: z.string(),

@@ -8,11 +8,6 @@
 - Create token for minio user
 - Populate main.env with bucket names and tokens
 
-Production
-
-- Same as above
-- Create mainservice/Dockerfile based on mainservice/Dockerfile.example
-
 ## S3 setup
 
 You need to create a bucket for calibrations. It needs to be readable by anyone.
@@ -42,7 +37,7 @@ TODO:
 - [x] Clear file input after it is used
 - [x] Add different bucket for media
 - [x] Remove all homographies on file processing
-- [ ] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
+- [x] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
 - [ ] Add uploaded video option
 - [ ] Add presentation option (?)
 - [ ] Make sure size is responsive
