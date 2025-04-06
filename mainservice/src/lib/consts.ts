@@ -46,4 +46,4 @@ export const MEDIA_SUPPORTED_EXTENSIONS = [
   "gif",
 ] as const;
 
-export const ACCEPTED_THIRD_PARTY_VIDEO = ["youtube.com"];
+export const ACCEPTED_THIRD_PARTY_VIDEO = ["youtube.com", "www.youtube.com"];
