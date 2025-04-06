@@ -1,5 +1,6 @@
 import roomContentObject from "@/db/objects/roomContent";
 import roomPubSubObject from "@/db/objects/roomPubSub";
+import roomRootObject from "@/db/objects/roomRoot";
 import { codeValidation } from "@/lib/utils";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { z } from "zod";
@@ -11,6 +12,9 @@ async function playUrlAction(formData: FormData) {
   const roomRes = await codeValidation().safeParseAsync(room);
   const urlRes = await z.string().url().safeParseAsync(url);
   if (!roomRes.success || !urlRes.success) {
+    return;
+  }
+  if (!(await roomRootObject.exists(roomRes.data))) {
     return;
   }
   await roomContentObject.type.set(roomRes.data, "iframe");

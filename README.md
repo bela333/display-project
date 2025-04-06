@@ -41,12 +41,12 @@ TODO:
 - [x] Close subscription
 - [x] Actually remove screen on disconnect
   - Not revelant anymore
+- [x] Add proper error handling when no tags appear on image
+- [x] Resolve TODOs in source code files
+- [x] Make sure rooms actually exist when changing them
 - [ ] Add uploaded video option
 - [ ] Add presentation option (?)
 - [ ] Make sure size is responsive
-- [ ] Add proper error handling when no tags appear on image
-- [ ] Make sure rooms actually exist when changing them
 - [ ] Potentially use websockets for better reliability
 - [ ] Auto synchronize YouTube videos (alternatively remove non-uploaded video option)
 - [ ] Tests
-- [ ] Resolve TODOs in source code files

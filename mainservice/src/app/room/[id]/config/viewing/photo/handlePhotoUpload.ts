@@ -12,6 +12,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/s3";
 import roomPhotosObject from "@/db/objects/roomPhotos";
+import roomRootObject from "@/db/objects/roomRoot";
+import { codeValidation } from "@/lib/utils";
 
 export type handlePhotoUploadPos = RoomUploadHandlerPos & {
   id: string;
@@ -32,6 +34,16 @@ export async function handlePhotoUpload({
       message: "File too large.",
     };
   }
+
+  const roomRes = await codeValidation().safeParseAsync(room);
+  if (!roomRes.success) {
+    return { ok: false, message: "Invalid room code" };
+  }
+
+  if (!(await roomRootObject.exists(roomRes.data))) {
+    return { ok: false, message: "Room does not exist" };
+  }
+
   const filenameParts = filename.split(".");
   const extension = filenameParts.at(filenameParts.length - 1);
 

@@ -1,11 +1,15 @@
 "use server";
 import roomContentObject from "@/db/objects/roomContent";
 import roomPubSubObject from "@/db/objects/roomPubSub";
+import roomRootObject from "@/db/objects/roomRoot";
 import { codeValidation } from "@/lib/utils";
 
 export async function togglePlayStateAction(room: string) {
   const roomRes = await codeValidation().safeParseAsync(room);
   if (!roomRes.success) {
+    return;
+  }
+  if (!(await roomRootObject.exists(roomRes.data))) {
     return;
   }
   const type = await roomContentObject.type.get(room);

@@ -12,6 +12,7 @@ import { codeValidation } from "@/lib/utils";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
+import roomRootObject from "@/db/objects/roomRoot";
 
 type ApriltagScreenRequest = {
   id: number;
@@ -41,6 +42,10 @@ export default async function processCalibrationFile(
 
   if (!roomRes.success) {
     return { ok: false as const, message: "Invalid room code" };
+  }
+
+  if (!(await roomRootObject.exists(roomRes.data))) {
+    return { ok: false as const, message: "Room does not exist" };
   }
 
   // Get code information for room

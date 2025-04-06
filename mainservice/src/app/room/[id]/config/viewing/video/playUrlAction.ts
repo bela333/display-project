@@ -1,6 +1,7 @@
 "use server";
 import roomContentObject from "@/db/objects/roomContent";
 import roomPubSubObject from "@/db/objects/roomPubSub";
+import roomRootObject from "@/db/objects/roomRoot";
 import { ACCEPTED_THIRD_PARTY_VIDEO } from "@/lib/consts";
 import { codeValidation } from "@/lib/utils";
 import { z } from "zod";
@@ -9,6 +10,13 @@ export async function playUrlAction(formData: FormData) {
   const room = formData.get("room");
   const url = formData.get("url");
   const roomRes = await codeValidation().safeParseAsync(room);
+  if (!roomRes.success) {
+    return { ok: false, message: "Invalid room code" };
+  }
+
+  if (!(await roomRootObject.exists(roomRes.data))) {
+    return { ok: false, message: "Room does not exist" };
+  }
   const urlRes = await z
     .string()
     .url()
@@ -25,17 +33,8 @@ export async function playUrlAction(formData: FormData) {
       }
     )
     .safeParseAsync(url);
-  if (!roomRes.success || !urlRes.success) {
-    if (roomRes.error) {
-      return {
-        ok: false as const,
-        message: roomRes.error.flatten().formErrors,
-      };
-    }
-    if (urlRes.error) {
-      return { ok: false as const, message: urlRes.error.flatten().formErrors };
-    }
-    return { ok: false as const, message: "Unknown error" };
+  if (!urlRes.success) {
+    return { ok: false as const, message: urlRes.error.flatten().formErrors };
   }
   await roomContentObject.type.set(roomRes.data, "video");
   await roomContentObject.url.set(roomRes.data, urlRes.data);
