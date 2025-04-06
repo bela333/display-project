@@ -34,7 +34,9 @@ export const roomRouter = createTRPCRouter({
         await pubsubClient.subscribe(roomPubSub(opts.input.room), (msg) => {
           ee.emit("msg", msg);
         });
-        for await (const [msg] of on(ee, "msg")) {
+        for await (const [msg] of on(ee, "msg", {
+          signal: opts.signal,
+        })) {
           if (msg === "ping") {
             yield serializeRoom(opts.input.room);
           }
