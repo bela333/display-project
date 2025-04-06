@@ -45,3 +45,5 @@ export const MEDIA_SUPPORTED_EXTENSIONS = [
   "heif",
   "gif",
 ] as const;
+
+export const ACCEPTED_THIRD_PARTY_VIDEO = ["youtube.com"];

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, Form
+from fastapi import FastAPI, File, Form, HTTPException
 import typing as t
 from pydantic import BaseModel, Json
 import cv2
@@ -38,10 +38,20 @@ class ProcessRequest(BaseModel):
 
     Attributes:
         screens (List[Screen]): A list of Screen objects to be processed.
+        filename (str): filename under which the calibration image can be found on S3
+        upload_url (str | None): presigned url to use to upload the cropped calibration image to S3
     """
     filename: str
     screens: list[Screen]
     upload_url: str | None
+
+ResponseScreen = t.TypedDict('Response', {'id': int, 'homography': list})
+
+ProcessResponse = t.TypedDict('ProcessResponse', {
+    'screens': list[ResponseScreen],
+    'width': int,
+    'height': int
+})
 
 
 detector = Detector()
@@ -64,12 +74,10 @@ def construct_code_homography(screen: Screen):
         )
     )
 
-ResponseScreen = t.TypedDict('Response', {'id': int, 'homography': list})
-
 @app.post("/")
 def process_image(
     req: ProcessRequest
-):
+) -> ProcessResponse:
     file = requests.get(f"{S3_ENDPOINT_INTERNAL}/{S3_CALIBRATION_BUCKET}/{req.filename}")
 
     image = cv2.imdecode(
@@ -101,6 +109,9 @@ def process_image(
         # and bottom right corner is (1, 1)
         homography = np.array(([1/grayscale.shape[1], 0, 0], [0, 1/grayscale.shape[0], 0], [0, 0, 1])).dot(homography)
         homographies[screen.id] = homography
+
+    if not homographies:
+        raise HTTPException(status_code=422, detail="No tags have been found")
 
     # We want to have a common coordinate system for every screen
     # based on the screen with the smallest ID
@@ -147,14 +158,12 @@ def process_image(
         generated = cv2.warpPerspective(grayscale,imagespace_virtual, (width, height))
         res, generated_image = cv2.imencode(".jpg", generated)
         if not res:
-            # TODO: Handle error
-            pass
+            raise HTTPException(status_code=500, detail="Could not encode image")
         generated_image = bytes(generated_image)
         requests.put(req.upload_url, generated_image) # TODO: Handle error
-
-    resp = {
+    
+    return {
         "screens": response_screens,
         "width": width,
         "height": height,
     }
-    return resp

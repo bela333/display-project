@@ -40,10 +40,7 @@ export default async function processCalibrationFile(
   const roomRes = await codeValidation().safeParseAsync(room);
 
   if (!roomRes.success) {
-    return;
-    /*return {
-      errors: res.error.flatten().fieldErrors,
-    };*/
+    return { ok: false as const, message: "Invalid room code" };
   }
 
   // Get code information for room
@@ -95,6 +92,11 @@ export default async function processCalibrationFile(
     }),
   });
 
+  if (resp.status !== 200) {
+    const respJson = (await resp.json()) as { detail?: string };
+    return { ok: false as const, message: respJson.detail };
+  }
+
   const respJson: ApriltagResponse = await apriltagResponse.parseAsync(
     await resp.json()
   );
@@ -122,5 +124,5 @@ export default async function processCalibrationFile(
   await roomImageObject.height.set(roomRes.data, respJson.height);
 
   await roomPubSubObject.ping(roomRes.data);
-  return warpedname;
+  return { ok: true as const, name: warpedname };
 }

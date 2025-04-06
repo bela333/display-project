@@ -1,5 +1,6 @@
 import roomContentObject from "@/db/objects/roomContent";
 import roomPubSubObject from "@/db/objects/roomPubSub";
+import { ACCEPTED_THIRD_PARTY_VIDEO } from "@/lib/consts";
 import { codeValidation } from "@/lib/utils";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { z } from "zod";
@@ -9,8 +10,13 @@ async function playUrlAction(formData: FormData) {
   const room = formData.get("room");
   const url = formData.get("url");
   const roomRes = await codeValidation().safeParseAsync(room);
-  // TODO: Validate URL origin
-  const urlRes = await z.string().url().safeParseAsync(url);
+  const urlRes = await z
+    .string()
+    .url()
+    .refine((val) => ACCEPTED_THIRD_PARTY_VIDEO.includes(new URL(val).origin), {
+      message: "Non-supported URL",
+    })
+    .safeParseAsync(url);
   if (!roomRes.success || !urlRes.success) {
     return;
   }

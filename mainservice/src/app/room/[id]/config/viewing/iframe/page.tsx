@@ -9,7 +9,6 @@ async function playUrlAction(formData: FormData) {
   const room = formData.get("room");
   const url = formData.get("url");
   const roomRes = await codeValidation().safeParseAsync(room);
-  // TODO: Validate URL origin
   const urlRes = await z.string().url().safeParseAsync(url);
   if (!roomRes.success || !urlRes.success) {
     return;

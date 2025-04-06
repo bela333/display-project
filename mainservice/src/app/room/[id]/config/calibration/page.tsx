@@ -8,13 +8,21 @@ import CalibrationImage from "./CalibrationImage";
 import RoomUploadButton from "../../../../RoomUploadButton";
 import { handleApriltagUpload } from "./handleApriltagUpload";
 import { CALIBRATION_SUPPORTED_MIME } from "@/lib/consts";
+import { notifications } from "@mantine/notifications";
 
 export default function ConfigCalibration() {
   const { id }: { id: string } = useParams();
 
   const onUpload = useCallback(
     async ({ filename }: { filename: string }) => {
-      await processCalibrationFile(id, filename);
+      const res = await processCalibrationFile(id, filename);
+      if (!res.ok && res.message) {
+        notifications.show({
+          message: res.message,
+          color: "red",
+        });
+        return;
+      }
     },
     [id]
   );

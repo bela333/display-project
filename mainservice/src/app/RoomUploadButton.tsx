@@ -1,4 +1,5 @@
 import { Button, FileButton } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -37,7 +38,11 @@ export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
       setLoading(true);
       try {
         if (!file) {
-          return; // TODO: Handle error
+          notifications.show({
+            message: "No file selected",
+            color: "red",
+          });
+          return;
         }
         const resp = await handleRequest({
           filename: file.name,
@@ -45,8 +50,11 @@ export default function RoomUploadButton<T extends RoomUploadHandlerPos>({
           room,
         });
         if (!resp.ok) {
-          alert(resp.message);
-          return; // TODO: Handle error BETTER
+          notifications.show({
+            message: resp.message,
+            color: "red",
+          });
+          return;
         }
         // TODO: Maybe replace this with a XHR, so that we can track progress?
         const req = await fetch(resp.url, { method: "PUT", body: file });

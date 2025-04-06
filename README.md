@@ -39,10 +39,11 @@ TODO:
 - [x] Remove all homographies on file processing
 - [x] Dockerfile.example is very suspicious. Docker doesn't like it a lot either
 - [x] Close subscription
+- [x] Actually remove screen on disconnect
+  - Not revelant anymore
 - [ ] Add uploaded video option
 - [ ] Add presentation option (?)
 - [ ] Make sure size is responsive
-- [ ] Actually remove screen on disconnect
 - [ ] Add proper error handling when no tags appear on image
 - [ ] Make sure rooms actually exist when changing them
 - [ ] Potentially use websockets for better reliability
