@@ -58,7 +58,7 @@ export default function ConfigLayout({
   }
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" h="100vh">
       <LoadingOverlay visible={loading} />
       {/* Toolbar */}
       <Flex justify="space-between" direction="row" m={10} mt={0}>
@@ -80,7 +80,7 @@ export default function ConfigLayout({
           View
         </Button>
       </Flex>
-      <Box>{children}</Box>
+      {children}
     </Flex>
   );
 }

@@ -44,9 +44,9 @@ TODO:
 - [x] Add proper error handling when no tags appear on image
 - [x] Resolve TODOs in source code files
 - [x] Make sure rooms actually exist when changing them
+- [x] Make sure size is responsive
 - [ ] Add uploaded video option
 - [ ] Add presentation option (?)
-- [ ] Make sure size is responsive
 - [ ] Potentially use websockets for better reliability
 - [ ] Auto synchronize YouTube videos (alternatively remove non-uploaded video option)
 - [ ] Tests

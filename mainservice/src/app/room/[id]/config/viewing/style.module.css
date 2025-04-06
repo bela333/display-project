@@ -1,0 +1,23 @@
+.container {
+  overflow: hidden;
+  @media (max-width: $mantine-breakpoint-sm) {
+    overflow: auto;
+    padding: 0.5rem;
+  }
+}
+
+.splitContainers {
+  width: 50%;
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: 0.25rem;
+    border: 1px solid gray;
+    border-radius: 0.25rem;
+    width: 100%;
+  }
+}
+
+.splitContainers:last-child {
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-top: 1rem;
+  }
+}

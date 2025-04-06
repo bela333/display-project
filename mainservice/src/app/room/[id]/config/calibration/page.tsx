@@ -1,5 +1,5 @@
 "use client";
-import { Container, Stack } from "@mantine/core";
+import { Box, Container, Stack } from "@mantine/core";
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import processCalibrationFile from "./processCalibrationFile";
@@ -28,16 +28,18 @@ export default function ConfigCalibration() {
   );
 
   return (
-    <Container>
-      <Stack>
-        <RoomUploadButton
-          onUpload={onUpload}
-          handleRequest={handleApriltagUpload}
-          supportedMimeTypes={CALIBRATION_SUPPORTED_MIME}
-          title="Upload calibration image"
-        />
-        <CalibrationImage />
-      </Stack>
-    </Container>
+    <Box>
+      <Container>
+        <Stack>
+          <RoomUploadButton
+            onUpload={onUpload}
+            handleRequest={handleApriltagUpload}
+            supportedMimeTypes={CALIBRATION_SUPPORTED_MIME}
+            title="Upload calibration image"
+          />
+          <CalibrationImage />
+        </Stack>
+      </Container>
+    </Box>
   );
 }
