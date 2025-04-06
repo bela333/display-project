@@ -25,4 +25,5 @@ COPY --from=builder /mainservice/public /app/public
 COPY --from=builder /mainservice/.next/standalone /app
 COPY --from=builder /mainservice/.next/static /app/.next/static
 
+ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
