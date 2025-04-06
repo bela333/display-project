@@ -1,7 +1,6 @@
 "use server";
 import roomContentObject from "@/db/objects/roomContent";
 import roomPubSubObject from "@/db/objects/roomPubSub";
-import { roomPubSub } from "@/db/redis-keys";
 import { codeValidation } from "@/lib/utils";
 
 export async function togglePlayStateAction(room: string) {

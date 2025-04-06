@@ -1,7 +1,6 @@
 "use client";
 
 import { type SerializedEmbeddedVideoContent } from "@/db/serialization";
-import { Box } from "@mantine/core";
 import { use, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import roomContext from "../_contexts/roomContext";
