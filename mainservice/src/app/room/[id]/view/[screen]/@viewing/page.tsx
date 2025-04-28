@@ -34,8 +34,8 @@ export default function ViewingPage() {
     [0, 0, 1],
   ];
 
-  // Column major 2D affine transformation (3x3)
-  let homography = math.transpose(math.matrix(inputHomography));
+  // Row major 2D affine transformation (3x3)
+  const homography = math.matrix(inputHomography);
 
   // Matrix representing screen size
   const screenSize = math.matrix([
@@ -43,34 +43,47 @@ export default function ViewingPage() {
     [0, screenBounds[1] ?? 1, 0],
     [0, 0, 1],
   ]);
-  const screenSizeInv = math.matrix([
-    [1 / (screenBounds[0] ?? 1), 0, 0],
-    [0, 1 / (screenBounds[1] ?? 1), 0],
+
+  const virtualScreenInv = math.matrix([
+    [1 / (room.lastEvent.image?.width ?? 1), 0, 0],
+    [0, 1 / (room.lastEvent.image?.height ?? 1), 0],
     [0, 0, 1],
   ]);
 
-  const makeWholeScreen = math.matrix([
-    [(screenBounds[0] ?? 1) / (room.lastEvent.image?.width ?? 1), 0, 0],
-    [0, (screenBounds[1] ?? 1) / (room.lastEvent.image?.height ?? 1), 0],
-    [0, 0, 1],
-  ]);
+  // Homography: screen -> virtual screen
+  const homographyInv = math.inv(homography);
+  // Homography: virtual screen -> screen
 
-  homography = math.inv(homography);
-
-  homography = math.multiply(
-    makeWholeScreen,
-    screenSizeInv,
-    homography,
-    screenSize
+  const transformation = math.multiply(
+    screenSize,
+    homographyInv,
+    virtualScreenInv
   );
 
   // Column major 3D affine transformation (4x4)
-  const matrix = math.matrix([
-    [homography.get([0, 0]), homography.get([0, 1]), 0, homography.get([0, 2])],
-    [homography.get([1, 0]), homography.get([1, 1]), 0, homography.get([1, 2])],
-    [0, 0, homography.get([2, 2]), 0],
-    [homography.get([2, 0]), homography.get([2, 1]), 0, homography.get([2, 2])],
-  ] as const);
+  const matrix = math.transpose(
+    math.matrix([
+      [
+        transformation.get([0, 0]),
+        transformation.get([0, 1]),
+        0,
+        transformation.get([0, 2]),
+      ],
+      [
+        transformation.get([1, 0]),
+        transformation.get([1, 1]),
+        0,
+        transformation.get([1, 2]),
+      ],
+      [0, 0, transformation.get([2, 2]), 0],
+      [
+        transformation.get([2, 0]),
+        transformation.get([2, 1]),
+        0,
+        transformation.get([2, 2]),
+      ],
+    ] as const)
+  );
 
   return (
     <Box w="100dvw" h="100dvh" style={{ overflow: "hidden" }}>
