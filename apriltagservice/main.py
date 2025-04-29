@@ -7,11 +7,6 @@ from pupil_apriltags import Detector
 import requests
 from os import environ
 
-assert environ.get("S3_ENDPOINT_INTERNAL")
-assert environ.get("S3_CALIBRATION_BUCKET")
-S3_ENDPOINT_INTERNAL = environ.get("S3_ENDPOINT_INTERNAL")
-S3_CALIBRATION_BUCKET = environ.get("S3_CALIBRATION_BUCKET")
-
 app = FastAPI()
 
 
@@ -41,20 +36,21 @@ class ProcessRequest(BaseModel):
         filename (str): filename under which the calibration image can be found on S3
         upload_url (str | None): presigned url to use to upload the cropped calibration image to S3
     """
+
     filename: str
     screens: list[Screen]
     upload_url: str | None
 
-ResponseScreen = t.TypedDict('Response', {'id': int, 'homography': list})
 
-ProcessResponse = t.TypedDict('ProcessResponse', {
-    'screens': list[ResponseScreen],
-    'width': int,
-    'height': int
-})
+ResponseScreen = t.TypedDict("Response", {"id": int, "homography": list})
+
+ProcessResponse = t.TypedDict(
+    "ProcessResponse", {"screens": list[ResponseScreen], "width": int, "height": int}
+)
 
 
 detector = Detector()
+
 
 # screen <- code homography
 def construct_code_homography(screen: Screen):
@@ -74,11 +70,17 @@ def construct_code_homography(screen: Screen):
         )
     )
 
+
 @app.post("/")
-def process_image(
-    req: ProcessRequest
-) -> ProcessResponse:
-    file = requests.get(f"{S3_ENDPOINT_INTERNAL}/{S3_CALIBRATION_BUCKET}/{req.filename}")
+def process_image(req: ProcessRequest) -> ProcessResponse:
+    assert environ.get("S3_ENDPOINT_INTERNAL")
+    assert environ.get("S3_CALIBRATION_BUCKET")
+    S3_ENDPOINT_INTERNAL = environ.get("S3_ENDPOINT_INTERNAL")
+    S3_CALIBRATION_BUCKET = environ.get("S3_CALIBRATION_BUCKET")
+
+    file = requests.get(
+        f"{S3_ENDPOINT_INTERNAL}/{S3_CALIBRATION_BUCKET}/{req.filename}"
+    )
 
     image = cv2.imdecode(
         np.asarray(bytearray(file.content), dtype="uint8"), cv2.IMREAD_COLOR_BGR
@@ -107,7 +109,9 @@ def process_image(
         # transform homography, such inputs are in pixel space
         # so top left corner is (0, 0)
         # and bottom right corner is (1, 1)
-        homography = np.array(([1/grayscale.shape[1], 0, 0], [0, 1/grayscale.shape[0], 0], [0, 0, 1])).dot(homography)
+        homography = np.array(
+            ([1 / grayscale.shape[1], 0, 0], [0, 1 / grayscale.shape[0], 0], [0, 0, 1])
+        ).dot(homography)
         homographies[screen.id] = homography
 
     if not homographies:
@@ -132,11 +136,10 @@ def process_image(
                 top = min(top, p[1])
                 right = max(right, p[0])
                 bottom = max(bottom, p[1])
-    
+
     # We can use these corners to calculate the homography for the virtual screen
-    virtual = template.dot([[right-left, 0, left], [0, bottom-top, top], [0, 0, 1]])
+    virtual = template.dot([[right - left, 0, left], [0, bottom - top, top], [0, 0, 1]])
     virtual_inv = np.linalg.inv(virtual)
-    
 
     # Then we embed every screen homography into the coordinate system of the virtual screen
     for id, homography in homographies.items():
@@ -144,26 +147,34 @@ def process_image(
         homography /= homography[2][2]
         homographies[id] = homography
 
-    response_screens: list[ResponseScreen] = [{"id": k, "homography": v.tolist()} for k, v in homographies.items()]
+    response_screens: list[ResponseScreen] = [
+        {"id": k, "homography": v.tolist()} for k, v in homographies.items()
+    ]
 
     template_screen = next(a for a in req.screens if a.id == template_id)
-    inner_width = abs(right-left)
-    inner_height = abs(bottom-top)
-    width = int(template_screen.screenSize[0]*inner_width)
-    height = int(template_screen.screenSize[1]*inner_height)
+    inner_width = abs(right - left)
+    inner_height = abs(bottom - top)
+    width = int(template_screen.screenSize[0] * inner_width)
+    height = int(template_screen.screenSize[1] * inner_height)
 
     if req.upload_url is not None:
-        imagespace_virtual = np.matrix(((image.shape[1], 0, 0), (0, image.shape[0], 0), (0, 0, 1))) * virtual * np.matrix(((1/width, 0, 0), (0, 1/height, 0), (0, 0, 1)))
+        imagespace_virtual = (
+            np.array(((image.shape[1], 0, 0), (0, image.shape[0], 0), (0, 0, 1)))
+            @ virtual
+            @ np.array(((1 / width, 0, 0), (0, 1 / height, 0), (0, 0, 1)))
+        )
         imagespace_virtual = np.linalg.inv(imagespace_virtual)
-        generated = cv2.warpPerspective(grayscale,imagespace_virtual, (width, height))
+        generated = cv2.warpPerspective(grayscale, imagespace_virtual, (width, height))
         res, generated_image = cv2.imencode(".jpg", generated)
         if not res:
             raise HTTPException(status_code=500, detail="Could not encode image")
         generated_image = bytes(generated_image)
-        requests.put(req.upload_url, generated_image) # TODO: Handle error
-    
-    return {
+        requests.put(req.upload_url, generated_image)  # TODO: Handle error
+
+    resp: ProcessResponse = {
         "screens": response_screens,
         "width": width,
         "height": height,
     }
+
+    return resp
